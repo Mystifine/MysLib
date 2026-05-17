@@ -1,12 +1,6 @@
 {
   "name": "MysLib",
   "tree": {
-    "$className": "DataModel",
-
-    "ReplicatedStorage": {
-      "MysLib": {
-        "$path": "src/MysLib"
-      }
-    }
+    "$path": "src"
   }
 }
