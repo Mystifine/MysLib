@@ -2,25 +2,38 @@ local StringUtil = {}
 
 StringUtil.RichText = require(script.RichText);
 
+local SUFFIXES = {
+	"K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", 
+  "Dc", "Ud", "Dd", "Td", "Qad", "Qid", "Sxd", "Spd", "Ocd", "Nod", 
+  "Vg", "Uvg"
+}
 function StringUtil.abbrev(num : number)
+	if not num or num ~= num then return "0" end;
+
+	local isNegative = num < 0;
+	num = math.abs(num);
+
 	if num < 1000 then
-		return tostring(num)
+		return (isNegative and "-" or "") .. tostring(num)
 	end
 
-	local suffixes = { "K", "M", "B", "T" }
-	local index = 0
+	local power = math.floor(math.log10(num));
+	local suffixIndex = math.floor(power / 3);
 
-	while num >= 1000 and index < #suffixes do
-		num /= 1000
-		index += 1
+	if suffixIndex > #SUFFIXES then
+		local mantissa = num / (10 ^ power);
+		return string.format("%s%.2fe%d",isNegative and "-" or "", mantissa, power);
 	end
 
-	-- Keep one decimal if needed
-	if num < 10 then
-		return string.format("%.1f%s", num, suffixes[index])
+	local displayNum = num / (10 ^ (suffixIndex * 3));
+	local formatString;
+	if displayNum < 10 then
+		formatString = "%.1f%s"
 	else
-		return string.format("%.0f%s", num, suffixes[index])
+		formatString = "%.0f%s"
 	end
+	
+	return (isNegative and "-" or "") .. string.format(formatString, displayNum, SUFFIXES[suffixIndex])
 end
 
 function StringUtil.addCommas(number : number)
