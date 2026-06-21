@@ -2,9 +2,20 @@
 
 ## Installation
 
-1. Clone or download MysLib
-2. Build with Rojo: `rojo build -o MysLib.rbxlx`
-3. Open in Roblox Studio or use `rojo serve` for live sync
+You may install MysLib in one of two ways:
+
+### Rojo
+1. Git clone or download the repository onto your computer
+2. Run `rojo build --o MysLib.rbxlx`
+3. Copy 'MysLib' in ReplicatedStorage into your desired location
+
+### Wally
+1. Edit your `wally.toml` file to include the following:
+```toml
+[dependencies]
+myslib = "mystifine/myslib@0.1.4"
+```
+2. Run `wally install`
 
 ## Importing MysLib
 
@@ -91,11 +102,5 @@ local copy = MysLib.TableUtil.deepCopy(originalTable)
 -- Math interpolation
 local value = MysLib.MathUtil.lerp(0, 100, 0.5) -- 50
 ```
-
-## Tools & Setup
-
-- **Rojo 7.6.1** — Luau to Roblox place conversion  
-- **Wally 0.3.2** — Package manager  
-- **Selene 0.30.1** — Luau linter  
 
 For detailed API documentation, see the [Core Systems](core-systems/signal.md) and [Utilities](utilities/string-util.md) sections.

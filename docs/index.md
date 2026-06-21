@@ -1,8 +1,10 @@
 # MysLib
+**Version:** 0.1.4
 
 A comprehensive Roblox utility library providing essential tools for game development, written in Luau.
 
-**Version:** 0.1.4
+!!! warning "AI-Assisted Documentation"
+    Documentation is AI-Assisted and may contain inaccuracies. Please report any issues or suggestions on the [GitHub Issues Page](https://github.com/Mystifine/MysLib/issues).
 
 ## What is MysLib?
 
@@ -33,9 +35,8 @@ MysLib is a collection of battle-tested utilities and systems designed to stream
 
 ```bash
 rojo build -o MysLib.rbxlx
-rojo serve
 ```
-
+Place `MysLib.rbxlx` in your game's `ReplicatedStorage` folder.
 ```lua
 local MysLib = require(path.to.MysLib)
 

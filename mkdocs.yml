@@ -1,4 +1,4 @@
-site_name: MysLib
+site_name: MysLib Documentation
 site_description: A comprehensive Roblox utility library
 repo_url: https://github.com/Mystifine/MysLib
 repo_name: Mystifine/MysLib
@@ -33,6 +33,8 @@ nav:
     - ModelUtil: utilities/model-util.md
     - GeneralUtil: utilities/general-util.md
 markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
   - pymdownx.highlight:
       use_pygments: true
-  - pymdownx.superfences
