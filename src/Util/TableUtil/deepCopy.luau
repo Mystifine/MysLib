@@ -1,8 +1,10 @@
-
+-- Recursively copies a table and all nested tables.
+-- @param tbl: Table to copy.
+-- @return: Deep copy of the table.
 local function deepCopy(tbl : {}?)
 
 	if typeof(tbl) ~= "table" then
-		return tbl 
+		return tbl
 	else
 		local copy = {}
 

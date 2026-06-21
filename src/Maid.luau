@@ -31,20 +31,23 @@ local function isValidTask(taskInstance)
   return false;
 end
 
+-- Adds a task to the maid for cleanup. Accepts functions, connections, or objects with Destroy/Disconnect.
+-- @param taskInstance: A function, RBXScriptConnection, or object with Destroy/Disconnect.
 function Maid:GiveTask(taskInstance)
-	
+
 	if not isValidTask(taskInstance) then
 		error(string.format("Maid:GiveTask => Invalid task received by maid.\n%s", debug.traceback()), 2);
 	end
-	
+
 	table.insert(self._tasks, taskInstance);
 end
 
+-- Cleans up all tasks in the maid. Functions called, connections disconnected, instances destroyed.
 function Maid:Destroy()
-	for i = 1, #self._tasks do 
+	for i = 1, #self._tasks do
 		local taskInstance = self._tasks[i];
 		local taskType = typeof(taskInstance);
-		
+
 		if taskType == "RBXScriptConnection" then
 			taskInstance:Disconnect();
 		elseif taskType == "function" then
@@ -55,18 +58,20 @@ function Maid:Destroy()
 			taskInstance:Destroy()
 		end
 	end
-	
+
 	self._tasks = {};
 end
 
 Maid.AddTask = Maid.GiveTask;
 Maid.DoCleaning = Maid.Destroy
 
+-- Creates a new maid instance for resource management.
+-- @return: A new maid object.
 function Maid.new()
 	local maid = setmetatable({}, Maid);
-	
+
 	maid._tasks = {};
-	
+
 	return maid;
 end
 

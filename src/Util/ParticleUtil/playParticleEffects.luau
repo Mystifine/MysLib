@@ -5,6 +5,21 @@ local emitParticle = require(script.Parent.emitParticle);
 local heartbeatConnection;
 local emissionDictionary = {};
 
+--[=[
+	Plays all particle effects in an instance with timing control via attributes.
+
+	Looks for ParticleEmitters in the instance and reads attributes:
+	- EmitCount: Number of particles to emit (default: Rate)
+	- EmitDelay: Delay before emission starts (default: 0)
+	- EmitDuration: How long particles emit (default: 0)
+
+	@param instance Instance -- Instance containing particle emitters
+
+	
+	```lua
+	ParticleUtil.playParticleEffects(workspace.EffectPart)
+	```
+]=]
 return function(instance : Instance)
 		
 	local children = instance:GetDescendants();

@@ -50,6 +50,8 @@ end
 local Signal = {}
 Signal.ClassName = "Signal";
 
+-- Yields until the signal fires and returns the arguments passed to Fire().
+-- @return: Arguments passed to Fire().
 function Signal:Wait()
 	local waitSignal = Instance.new("BindableEvent");
 	waitSignal.Name = "WaitSignalBindableEvent";
@@ -73,6 +75,9 @@ function Signal:Wait()
 	return waitSignal.Event:Wait();
 end
 
+-- Connects a callback that fires only once, then automatically disconnects.
+-- @param callback: Function to call when signal fires.
+-- @return: SignalConnection object.
 function Signal:Once(callback)
 	assert(typeof(callback) == "function", "Signal:Once(): Callback must be a function");
 
@@ -93,6 +98,9 @@ function Signal:Once(callback)
 	return signalConnection
 end
 
+-- Connects a callback function to the signal. Called every time the signal fires.
+-- @param callback: Function to call when signal fires.
+-- @return: SignalConnection object with Disconnect() method.
 function Signal:Connect(callback)
 	assert(typeof(callback) == "function", "Signal:Connect(): Callback must be a function");
 	
@@ -108,19 +116,23 @@ function Signal:Connect(callback)
 	return signalConnection
 end
 
+-- Fires the signal, calling all connected callbacks with the provided arguments.
+-- @param ...: Arguments to pass to all connected callbacks.
 function Signal:Fire(...)
 	local callbackList = table.clone(self._connections);
-	for _, callback in pairs(callbackList) do 
+	for _, callback in pairs(callbackList) do
 		task.spawn(callback, ...);
 	end
 end
 
+-- Creates a new signal instance.
+-- @return: A new signal object.
 function Signal.new()
 	local signal = setmetatable({}, {__index = Signal});
 	signal._connections = {};
 	signal._connectionId = 0;
-	
-	return signal;	
+
+	return signal;
 end
 
 return Signal

@@ -18,6 +18,23 @@ local ATTACHMENT_NAME = "mysLibAlignOrientationAttachment";
 local ALIGN_ORIENTATION_NAME = "mysLibAlignOrientation";
 
 -- Constructor
+--[=[
+	Creates a new orientation wrapper for applying alignment to a part.
+
+	@param base_part BasePart -- Part to apply orientation to
+	@param max_torque number -- Maximum torque to apply
+	@param cframe CFrame -- Target orientation
+	@param duration number -- How long to apply orientation (-1 for infinite)
+	@param priority number? -- Priority level (higher overrides lower, default: 0)
+	@return Orientation -- Orientation object
+
+	
+	```lua
+	local orient = Orientation.new(part, 1000, CFrame.Angles(0, math.rad(45), 0), 5, 1)
+	orient:SetCFrame(CFrame.Angles(0, math.rad(90), 0))
+	orient:Destroy()
+	```
+]=]
 function OrientationClass.new(base_part: BasePart, max_torque: number, cframe: CFrame, duration: number, priority : number)
 	local self = setmetatable({}, OrientationClass)
 	self.connections = {};
@@ -81,6 +98,16 @@ function OrientationClass.new(base_part: BasePart, max_torque: number, cframe: C
 end
 
 -- Method to update CFrame
+--[=[
+	Updates the target orientation.
+
+	@param cframe CFrame -- New target orientation
+
+	
+	```lua
+	orient:SetCFrame(CFrame.Angles(0, math.rad(90), 0))
+	```
+]=]
 function OrientationClass:SetCFrame(cframe: CFrame)
 	if self.align_orientation then
 		self.align_orientation.CFrame = cframe
@@ -88,6 +115,16 @@ function OrientationClass:SetCFrame(cframe: CFrame)
 end
 
 -- Method to update MaxTorque
+--[=[
+	Updates the maximum torque.
+
+	@param max_torque number -- New maximum torque
+
+	
+	```lua
+	orient:SetMaxTorque(2000)
+	```
+]=]
 function OrientationClass:SetMaxTorque(max_torque: number)
 	if self.align_orientation then
 		self.align_orientation.MaxTorque = max_torque
@@ -95,6 +132,14 @@ function OrientationClass:SetMaxTorque(max_torque: number)
 end
 
 -- Method to destroy the AlignOrientation instance
+--[=[
+	Destroys the orientation constraint and cleans up resources.
+
+	
+	```lua
+	orient:Destroy()
+	```
+]=]
 function OrientationClass:Destroy()
 	if self.base_part == nil then return end;
 	

@@ -19,7 +19,13 @@ local Velocity = {}
 Velocity.__index = Velocity
 Velocity.ClassName = "PriorityVelocity";
 
--- Constructor
+-- Creates a new velocity wrapper for applying linear velocity to a part.
+-- @param basePart: Part to apply velocity to.
+-- @param maxForce: Maximum force per axis.
+-- @param velocity: Initial velocity vector.
+-- @param duration: How long to apply velocity (-1 for infinite).
+-- @param priority: Priority level for velocity (higher overrides lower).
+-- @return: Velocity object.
 function Velocity.new(basePart : BasePart, maxForce : Vector3, velocity : Vector3, duration : number, priority : number)
 	local self = setmetatable({}, Velocity);
 	self.connections = {};
@@ -78,21 +84,23 @@ function Velocity.new(basePart : BasePart, maxForce : Vector3, velocity : Vector
 	return self
 end
 
--- Method to update velocity
+-- Updates the velocity of the linear velocity constraint.
+-- @param velocity: New velocity to apply.
 function Velocity:SetVelocity(velocity : Vector3)
 	if self.linearVelocity then
 		self.linearVelocity.VectorVelocity = velocity
 	end
 end
 
--- Method to update max force
+-- Updates the maximum force of the linear velocity constraint.
+-- @param maxForce: New maximum force per axis.
 function Velocity:SetMaxForce(maxForce : Vector3)
 	if self.linearVelocity then
 		self.linearVelocity.MaxAxesForce = maxForce
 	end
 end
 
--- Method to destroy the LinearVelocity instance
+-- Destroys the velocity constraint and cleans up resources.
 function Velocity:Destroy()
 	if self.basePart == nil then return end;
 	

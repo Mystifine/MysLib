@@ -41,7 +41,7 @@ local function handleHeartbeatUpdate()
 	for i = 1, #tempCallbacks do
 		local heartbeatInfo = tempCallbacks[i];
 		local ok ,err = pcall(heartbeatInfo.heartbeat.Callback, heartbeatInfo.elapsed);
-		
+
 		if not ok then
 			-- Throw warning with traceback
 			warn("Heartbeat callback error: " .. tostring(err))
@@ -50,7 +50,7 @@ local function handleHeartbeatUpdate()
 	table.clear(tempCallbacks);
 end
 
---[[ Equivalent to Destroy ]]
+-- Disconnects the heartbeat callback.
 function Heartbeat:Disconnect()
 	if activeCallbacks[self.HeartbeatId] then
 		activeCallbacks[self.HeartbeatId] = nil
@@ -58,6 +58,10 @@ function Heartbeat:Disconnect()
 end
 Heartbeat.Destroy = Heartbeat.Disconnect
 
+-- Creates a new heartbeat connection that calls a callback every frame with optional cooldown.
+-- @param onHeartbeat: Callback function receiving elapsed time.
+-- @param cooldown: Minimum time between calls (optional).
+-- @return: HeartbeatConnection object with Disconnect() method.
 function Heartbeat.new(onHeartbeat : (deltaTime : number) -> nil, cooldown : number?)
 	assert(onHeartbeat, "Heartbeat callback missing")
 

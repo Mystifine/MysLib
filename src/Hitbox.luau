@@ -123,32 +123,36 @@ function BaseHitbox.new(HitboxConfig : HitboxConfig)
 	return self;
 end
 
+-- Performs a single collision check without continuous monitoring.
 function BaseHitbox:Cast()
 	-- If the hitbox is dead we do not want to call this method
 	if not self._active then
 		return;
 	end
-	
+
 	self:_performCollisionCheck();
 end
 
+-- Starts continuous collision detection every frame.
 function BaseHitbox:Start()
 	-- If the hitbox is dead we do not want to call this method
 	if not self._active then
 		return;
 	end
-	
+
 	hitboxCache[self._id] = self;
 	if not steppedConnection then
 		steppedConnection = RunService.Stepped:Connect(onStepped);
 	end
 end
 
+-- Stops continuous collision detection.
 function BaseHitbox:Stop()
 	-- Stopping the hitbox removes it from the cache
 	hitboxCache[self._id] = nil;
 end
 
+-- Destroys the hitbox and cleans up resources.
 function BaseHitbox:Destroy()
 	self._active = false; -- Mark this hitbox as dead
 	
@@ -191,14 +195,17 @@ export type SquareHitboxConfig = HitboxConfig & {
 
 local SquareHitbox = setmetatable({}, {__index = BaseHitbox});
 
+-- Creates a square (box) hitbox for collision detection.
+-- @param config: Configuration table with cframe, size, onHit, etc.
+-- @return: The hitbox object.
 function SquareHitbox.new(SquareHitboxConfig : SquareHitboxConfig)
 	local super = BaseHitbox.new(SquareHitboxConfig);
 	local self = setmetatable(super, {__index = SquareHitbox});
-	
+
 	self.cframe = SquareHitboxConfig.cframe;
 	self.size = SquareHitboxConfig.size;
 	self._hitboxType = "SquareHitbox";
-	
+
 	return self;
 end
 
@@ -257,6 +264,9 @@ export type SphereHitboxConfig = HitboxConfig & {
 
 local SphereHitbox = setmetatable({}, {__index = BaseHitbox});
 
+-- Creates a sphere hitbox for collision detection.
+-- @param config: Configuration table with cframe, radius, onHit, etc.
+-- @return: The hitbox object.
 function SphereHitbox.new(SphereHitboxConfig : SphereHitboxConfig)
 	local self = setmetatable(BaseHitbox.new(SphereHitboxConfig), {__index = SphereHitbox});
 
@@ -320,6 +330,9 @@ export type BasePartHitboxConfig = HitboxConfig & {
 
 local BasePartHitbox = setmetatable({}, {__index = BaseHitbox});
 
+-- Creates a hitbox based on an existing part's shape and size.
+-- @param config: Configuration table with basePart, onHit, etc.
+-- @return: The hitbox object.
 function BasePartHitbox.new(BasePartHitboxConfig : BasePartHitboxConfig)
 	assert(BasePartHitboxConfig.basePart, "basepart is not defined");
 
@@ -379,6 +392,9 @@ export type ProjectileHitboxConfig = HitboxConfig & {
 
 local ProjectileHitbox = setmetatable({}, {__index = BaseHitbox});
 
+-- Creates a projectile hitbox that raycasts along a path with velocity.
+-- @param config: Configuration table with cframe, velocity, lifetime, width, height, onHit, etc.
+-- @return: The projectile hitbox object.
 function ProjectileHitbox.new(ProjectileHitboxConfig : ProjectileHitboxConfig)
 	local self = setmetatable(BaseHitbox.new(ProjectileHitboxConfig), {__index = ProjectileHitbox});
 
@@ -494,11 +510,20 @@ HitboxLib.sphere = SphereHitbox.new;
 HitboxLib.basePart = BasePartHitbox.new;
 HitboxLib.projectile = ProjectileHitbox.new;
 
+-- Performs a raycast with optional debug visualization.
+-- @param origin: Starting point of the raycast.
+-- @param direction: Direction and length of the raycast.
+-- @param raycastParams: Raycast parameters.
+-- @param visualize: Show debug visualization (optional).
+-- @param visualizeColor: Color of debug visualization (optional).
+-- @param visualizeTransparency: Transparency of visualization (optional).
+-- @param visualizeDuration: Duration to show visualization (optional).
+-- @return: Result of the raycast (or nil if no hit).
 function HitboxLib.raycast(origin : Vector3, direction : Vector3, raycastParams : RaycastParams, visualize : boolean?, visualizeColor : Color3?, visualizeTransparency : number?, visualizeDuration : number?)
 	local result = workspace:Raycast(origin, direction, raycastParams);
-	
+
 	if visualize then
-		local debugPart = getDebugPart(visualizeColor, visualizeTransparency);	
+		local debugPart = getDebugPart(visualizeColor, visualizeTransparency);
 		local start_pos = origin;
 		local end_pos = start_pos + direction;
 		local distance = (end_pos-start_pos).Magnitude;
@@ -511,6 +536,16 @@ function HitboxLib.raycast(origin : Vector3, direction : Vector3, raycastParams 
 	return result;
 end
 
+-- Performs a spherecast with optional debug visualization.
+-- @param position: Center position of the sphere.
+-- @param radius: Radius of the sphere.
+-- @param direction: Direction and length of movement.
+-- @param raycastParams: Raycast parameters.
+-- @param visualize: Show debug visualization (optional).
+-- @param visualizeColor: Color of debug visualization (optional).
+-- @param visualizeTransparency: Transparency of visualization (optional).
+-- @param visualizeDuration: Duration to show visualization (optional).
+-- @return: Result of the spherecast (or nil if no hit).
 function HitboxLib.spherecast(position : Vector3, radius : number, direction : Vector3, raycastParams : RaycastParams, visualize : boolean?, visualizeColor : Color3?, visualizeTransparency : number?, visualizeDuration : number?)
 	local result = workspace:Spherecast(position, radius, direction,raycastParams)
 	
@@ -547,22 +582,40 @@ function HitboxLib.spherecast(position : Vector3, radius : number, direction : V
 	return result;
 end
 
+-- Gets all parts within a radius.
+-- @param position: Center position.
+-- @param radius: Radius to search.
+-- @param overlapParams: Overlap parameters for filtering.
+-- @return: List of parts found.
 function HitboxLib.getPartBoundsInRadius(...)
 	return game.Workspace:GetPartBoundsInRadius(...);
 end
 
+-- Gets all parts within a box.
+-- @param cframe: Center position and orientation.
+-- @param size: Half-size of the box.
+-- @param overlapParams: Overlap parameters for filtering.
+-- @return: List of parts found.
 function HitboxLib.getPartBoundsInBox(...)
 	return game.Workspace:GetPartBoundsInBox(...)
 end
 
+-- Gets all parts intersecting with a part.
+-- @param basePart: The part to use for overlap detection.
+-- @param overlapParams: Overlap parameters for filtering.
+-- @return: List of parts found.
 function HitboxLib.getPartsInPart(...)
 	return game.Workspace:GetPartsInPart(...);
 end
 
+-- Finds the closest target from a list of models based on position.
+-- @param position: Reference position to measure distance from.
+-- @param targetList: Dictionary of models to search.
+-- @return: The closest model, or nil if no targets.
 function HitboxLib.getClosestTarget(position : Vector3, targetList : {[Model] : boolean})
 	local closestDistance
 	local closestTarget
-	for target, _ in pairs(targetList) do 
+	for target, _ in pairs(targetList) do
 		local distance = (target.PrimaryPart.Position - position).Magnitude;
 		if not closestTarget or distance < closestDistance then
 			closestDistance = distance;

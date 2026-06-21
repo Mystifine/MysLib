@@ -1,0 +1,38 @@
+site_name: MysLib
+site_description: A comprehensive Roblox utility library
+repo_url: https://github.com/Mystifine/MysLib
+repo_name: Mystifine/MysLib
+docs_dir: docs
+site_dir: site
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Core Systems:
+    - Signal: core-systems/signal.md
+    - Maid: core-systems/maid.md
+    - Hitbox: core-systems/hitbox.md
+    - AttributeModifier: core-systems/attribute-modifier.md
+    - Debris: core-systems/debris.md
+    - Bootstrapper: core-systems/bootstrapper.md
+    - waitForChild: core-systems/wait-for-child.md
+  - Utilities:
+    - StringUtil: utilities/string-util.md
+    - MathUtil: utilities/math-util.md
+    - TableUtil: utilities/table-util.md
+    - PlayerUtil: utilities/player-util.md
+    - PhysicsUtil: utilities/physics-util.md
+    - ParticleUtil: utilities/particle-util.md
+    - ModelUtil: utilities/model-util.md
+    - GeneralUtil: utilities/general-util.md
+markdown_extensions:
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.superfences

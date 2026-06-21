@@ -46,6 +46,9 @@ local function onHeartbeat()
 	end
 end
 
+-- Schedules an object for destruction after a specified delay.
+-- @param object: The Instance or table to be destroyed.
+-- @param destroyTime: Time in seconds before destruction.
 function Debris.AddItem(object, destroyTime)
 	assert( (typeof(object) == "Instance" or typeof(object) == "table"), string.format("Error: invalid <object> type passed: %s, expected instance or list", typeof(object)) );
 	assert( typeof(destroyTime) == "number", string.format("Error: invalid <destroyTime> type passed: %s, expected number", typeof(destroyTime)) );
@@ -55,16 +58,18 @@ function Debris.AddItem(object, destroyTime)
 		destroyTime = destroyTime,
 		item = object,
 	});
-	
+
 	if #trashSchedule > 0 and not heartbeatEventConnection then
 		heartbeatEventConnection = RunService.Heartbeat:Connect(onHeartbeat)
 	end
 end
 
+-- Removes a scheduled item before it's destroyed.
+-- @param object: The object to remove from destruction schedule.
 function Debris.RemoveItem(object)
 	local index = #trashSchedule;
 
-	while index >= 1 do 
+	while index >= 1 do
 		local trash = trashSchedule[index];
 		if trash.item == object then
 			table.remove(trashSchedule, index);

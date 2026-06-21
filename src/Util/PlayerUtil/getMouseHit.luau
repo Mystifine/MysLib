@@ -10,26 +10,34 @@ local player = Players.LocalPlayer;
 local MIN_AIM_DISTANCE = 20;
 local LONG_DISTANCE = 2048;
 
+--[=[
+	Gets the CFrame position where the mouse is pointing (client-only function).
+
+	@return CFrame -- CFrame at mouse hit position
+
+	
+	```lua
+	local mouseCFrame = PlayerUtil.getMouseHit()
+	-- Use mouseCFrame to place objects at mouse position
+	```
+]=]
 local function getMouseHit()
 	if RunService:IsServer() then
 		warn(string.format("getMouseHit => getMouseHit is not valid on the server.\nTraceback: %s", debug.traceback()));
-		return CFrame.new();	
+		return CFrame.new();
 	end
-	
+
 	local mouse = player:GetMouse()
 	local camera = workspace.CurrentCamera;
 	local mouseScreenPos = Vector2.new(mouse.X, mouse.Y)
-	if getPlayerPlatform() == "Mobile" then	
+	if getPlayerPlatform() == "Mobile" then
 		local guiInset = GuiService:GetGuiInset()
 		mouseScreenPos = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2 - guiInset.Y)
 	end
-	
+
 	local mouseUnitRay = camera:ScreenPointToRay(mouseScreenPos.X, mouseScreenPos.Y)
 	local mouseUnitRayDirection = mouseUnitRay.Direction
 
-	--local mouseUnitRay = camera:ScreenPointToRay(mousePos.X,mousePos.Y);
-	--local mouseUnitRayDirection = mouseUnitRay.Direction;
-	
 	local raycastParams = RaycastParams.new();
 	raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("VISUALS"), player.Character};
 	raycastParams.FilterType = Enum.RaycastFilterType.Exclude;
@@ -45,16 +53,6 @@ local function getMouseHit()
 		else
 			newMouseHitPosition = result.Position;
 		end
-				
-		--local part = Instance.new("Part");
-		--part.Anchored = true;
-		--part.CanCollide = false;
-		--part.Position = newMouseHitPosition;
-		--part.Color= Color3.fromRGB(255,0,0);
-		--part.Size = Vector3.new(10,10,10);
-		--part.Material= Enum.Material.Neon;
-		--part.Name = "MouseHitVisualization";
-		--part.Parent = workspace.VISUALS;
 	else
 		newMouseHitPosition = camera.CFrame.Position + mouseUnitRayDirection * LONG_DISTANCE;
 	end

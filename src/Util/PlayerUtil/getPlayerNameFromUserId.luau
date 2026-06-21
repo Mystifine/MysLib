@@ -2,11 +2,18 @@ local Players = game.Players;
 
 local usernameCache = {};
 
---[[
-	Retrives the username from the userId. This function yields.
-	@param userId number
-	@return playerName string
-]]
+--[=[
+	Retrieves the username from a user ID (yields while fetching from API).
+
+	@param userId number -- The user ID to look up
+	@return string -- The player's username (or "Player" on failure)
+
+	
+	```lua
+	local name = PlayerUtil.getPlayerNameFromUserId(1)
+	print(name) -- "Roblox"
+	```
+]=]
 return function(userId : number)
 	local playerName = "";
 

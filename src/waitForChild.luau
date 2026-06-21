@@ -10,6 +10,11 @@ local RunService = game:GetService("RunService")
 
 local WARNING_TIME = 30;
 
+-- Waits for a child to be added to an instance with optional timeout and warnings.
+-- @param parent: Parent instance to search in.
+-- @param childName: Name of the child to find.
+-- @param timeOut: Maximum time to wait (optional).
+-- @return: The child instance or nil if timeout/parent destroyed.
 return function(objectA: Instance, childName: string, timeOut: number?)
   local actualTimeOut = timeOut or math.huge;
 	local start = os.clock()

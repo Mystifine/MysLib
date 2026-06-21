@@ -3,10 +3,14 @@ local StringUtil = {}
 StringUtil.RichText = require(script.RichText);
 
 local SUFFIXES = {
-	"K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", 
-  "Dc", "Ud", "Dd", "Td", "Qad", "Qid", "Sxd", "Spd", "Ocd", "Nod", 
+	"K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No",
+  "Dc", "Ud", "Dd", "Td", "Qad", "Qid", "Sxd", "Spd", "Ocd", "Nod",
   "Vg", "Uvg"
 }
+
+-- Abbreviates large numbers to a shorter format with suffixes (K, M, B, etc.).
+-- @param num: The number to abbreviate.
+-- @return: Abbreviated number string.
 function StringUtil.abbrev(num : number)
 	if not num or num ~= num then return "0" end;
 
@@ -32,10 +36,13 @@ function StringUtil.abbrev(num : number)
 	else
 		formatString = "%.0f%s"
 	end
-	
+
 	return (isNegative and "-" or "") .. string.format(formatString, displayNum, SUFFIXES[suffixIndex])
 end
 
+-- Formats a number with comma separators for thousands.
+-- @param number: The number to format.
+-- @return: Formatted number with commas.
 function StringUtil.addCommas(number : number)
 	local formattedNumber = tostring(number)
 
@@ -54,6 +61,9 @@ function StringUtil.addCommas(number : number)
 	return result
 end
 
+-- Converts seconds to a human-readable time format.
+-- @param seconds: Number of seconds.
+-- @return: Formatted time string (e.g., "1d 2h 30m 45s").
 function StringUtil.formatTime(seconds : number)
 	local days = math.floor(seconds / (24 * 60 * 60))
 	local hours = math.floor((seconds % (24 * 60 * 60)) / (60 * 60))

@@ -35,7 +35,7 @@ local function handleSteppedUpdate()
 		if elapsed >= obj.Cooldown then
 			obj.LastCallback = now;
 			table.insert(tempCallbacks, {
-				stepped = obj, 
+				stepped = obj,
 				elapsed = elapsed
 			})
 		end
@@ -53,7 +53,14 @@ local function handleSteppedUpdate()
 	table.clear(tempCallbacks);
 end
 
---[[ Equivalent to Destroy ]]
+--[=[
+	Disconnects the stepped callback.
+
+	
+	```lua
+	stepped:Disconnect()
+	```
+]=]
 function Stepped:Disconnect()
 	if activeCallbacks[self.SteppedId] then
 		activeCallbacks[self.SteppedId] = nil
@@ -61,6 +68,22 @@ function Stepped:Disconnect()
 end
 Stepped.Destroy = Stepped.Disconnect
 
+--[=[
+	Creates a new stepped (physics) connection that calls a callback every physics frame with optional cooldown.
+
+	@param onStepped function -- Callback function receiving elapsed time
+	@param cooldown number? -- Minimum time between calls (default: 0)
+	@return SteppedConnection -- Connection object with Disconnect() method
+
+	
+	```lua
+	local stepped = Stepped.new(function(elapsed)
+		print("Physics frame elapsed:", elapsed)
+	end, 0.1)
+
+	stepped:Disconnect()
+	```
+]=]
 function Stepped.new(onStepped : (deltaTime : number) -> nil, cooldown : number?)
 	assert(onStepped, "Stepped callback missing")
 

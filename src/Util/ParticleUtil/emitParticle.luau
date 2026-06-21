@@ -1,5 +1,16 @@
 local RunService = game:GetService("RunService")
 
+--[=[
+	Emits particles from a ParticleEmitter, scaling based on graphics quality (client-only).
+
+	@param particleEmitter ParticleEmitter -- The emitter to emit from
+	@param emissionAmount number -- Number of particles to emit
+
+	
+	```lua
+	ParticleUtil.emitParticle(emitter, 50)
+	```
+]=]
 return function(particleEmitter : ParticleEmitter, emissionAmount : number)
 	assert(RunService:IsClient(), "emitParticle can only be called on the client.");
 
