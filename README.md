@@ -19,6 +19,8 @@ rojo serve
 
 ```lua
 local MysLib = require(path.to.MysLib)
+
+-- Example usage...
 local signal = MysLib.Signal.new()
 ```
 
