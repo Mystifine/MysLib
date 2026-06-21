@@ -23,7 +23,7 @@
     
     
       
-        <title>MysLib</title>
+        <title>MysLib Documentation</title>
       
     
     
@@ -78,7 +78,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="MysLib" class="md-header__button md-logo" aria-label="MysLib" data-md-component="logo">
+    <a href="." title="MysLib Documentation" class="md-header__button md-logo" aria-label="MysLib Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            MysLib
+            MysLib Documentation
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -279,13 +279,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="MysLib" class="md-nav__button md-logo" aria-label="MysLib" data-md-component="logo">
+    <a href="." title="MysLib Documentation" class="md-nav__button md-logo" aria-label="MysLib Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    MysLib
+    MysLib Documentation
   </label>
   
     <div class="md-nav__source">
@@ -1076,8 +1076,12 @@
 
 
 <h1 id="myslib">MysLib</h1>
-<p>A comprehensive Roblox utility library providing essential tools for game development, written in Luau.</p>
 <p><strong>Version:</strong> 0.1.4</p>
+<p>A comprehensive Roblox utility library providing essential tools for game development, written in Luau.</p>
+<div class="admonition warning">
+<p class="admonition-title">AI-Assisted Documentation</p>
+<p>Documentation is AI-Assisted and may contain inaccuracies. Please report any issues or suggestions on the <a href="https://github.com/Mystifine/MysLib/issues">GitHub Issues Page</a>.</p>
+</div>
 <h2 id="what-is-myslib">What is MysLib?</h2>
 <p>MysLib is a collection of battle-tested utilities and systems designed to streamline Roblox game development. Whether you're building combat systems, managing resources, detecting collisions, or manipulating game objects, MysLib provides clean, efficient APIs.</p>
 <h2 id="core-systems">Core Systems</h2>
@@ -1098,9 +1102,9 @@
 <strong><a href="utilities/player-util/">PlayerUtil</a></strong> — Player info, platform detection, raycasting<br />
 <strong><a href="utilities/general-util/">GeneralUtil</a></strong> — Heartbeat/stepped connections, conditional yielding  </p>
 <h2 id="quick-start">Quick Start</h2>
-<div class="highlight"><pre><span></span><code>rojo<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </span>MysLib.rbxlx
-rojo<span class="w"> </span>serve
+<p><div class="highlight"><pre><span></span><code>rojo<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </span>MysLib.rbxlx
 </code></pre></div>
+Place <code>MysLib.rbxlx</code> in your game's <code>ReplicatedStorage</code> folder.
 <div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">MysLib</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="p">(</span><span class="nv">path</span><span class="p">.</span><span class="py">to</span><span class="p">.</span><span class="py">MysLib</span><span class="p">)</span>
 
 <span class="c1">-- Use Signal for events</span>
@@ -1114,7 +1118,7 @@ rojo<span class="w"> </span>serve
 <span class="kd">local</span><span class="w"> </span><span class="nv">maid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">Maid</span><span class="p">.</span><span class="nf">new</span><span class="p">()</span>
 <span class="nv">maid</span><span class="p">:</span><span class="nf">GiveTask</span><span class="p">(</span><span class="nv">connection</span><span class="p">)</span>
 <span class="nv">maid</span><span class="p">:</span><span class="nf">Destroy</span><span class="p">()</span><span class="w"> </span><span class="c1">-- Cleans up all tasks</span>
-</code></pre></div>
+</code></pre></div></p>
 <p>See <a href="getting-started/">Getting Started</a> for more examples.</p>
 
 
