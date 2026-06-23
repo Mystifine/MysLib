@@ -6,7 +6,7 @@ You may install MysLib in one of two ways:
 
 ### Rojo
 1. Git clone or download the repository onto your computer
-2. Run `rojo build --o MysLib.rbxlx`
+2. Run `rojo build -o MysLib.rbxlx`
 3. Copy 'MysLib' in ReplicatedStorage into your desired location
 
 ### Wally
