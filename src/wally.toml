@@ -1,0 +1,7 @@
+[package]
+name = "mystifine/myslib"
+version = "0.2.1"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+include = ["**"]
