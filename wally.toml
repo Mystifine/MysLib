@@ -1,11 +1,15 @@
 [package]
 name = "mystifine/myslib"
-version = "0.1.9"
+version = "0.2.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
+exclude = ["**"]
+
 include = [
-  "*.luau",
-  "Util/**",
-  "wally.toml",
+  "src",
+  "src/**",
+  "default.project.json",
+  "README.md",
+  "wally.toml"
 ]
