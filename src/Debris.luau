@@ -3,12 +3,13 @@
   
   By: Mystifine#4924
   
-  Last Updated: 2026-05-16
+  Last Updated: 2026-09-01
 ]]
 
 local RunService = game:GetService("RunService")
 
 local Maid = require(script.Parent.Maid);
+local GeneralUtil = require(script.Parent.Util.GeneralUtil);
 
 local trashCollector = Maid.new();
 
@@ -29,16 +30,20 @@ local trashSchedule : {
 } = {};
 
 local function onHeartbeat()
-	local index = #trashSchedule;
-	
-	while index >= 1 do 
-		local trash = trashSchedule[index];
+	local index = #trashSchedule
+	while index >= 1 do
+		local trash = trashSchedule[index]
 		if os.clock() - trash.timeStamp >= trash.destroyTime then
-			trashCollector:GiveTask(trash.item);
-			trashCollector:DoCleaning();
-			table.remove(trashSchedule, index);
+			local ok, err = pcall(function()
+				trashCollector:GiveTask(trash.item)
+				trashCollector:DoCleaning()
+			end)
+			if not ok then
+				GeneralUtil.warn(script.Name, "onHeartbeat => Failed to clean up item: " .. tostring(err))
+			end
+			table.remove(trashSchedule, index)
 		end
-		index -= 1;
+		index -= 1
 	end
 	
 	if #trashSchedule == 0 then
@@ -52,6 +57,7 @@ end
 function Debris.AddItem(object, destroyTime)
 	assert( (typeof(object) == "Instance" or typeof(object) == "table"), string.format("Error: invalid <object> type passed: %s, expected instance or list", typeof(object)) );
 	assert( typeof(destroyTime) == "number", string.format("Error: invalid <destroyTime> type passed: %s, expected number", typeof(destroyTime)) );
+	assert(Maid.isValidTask(object), string.format("Error: <object> is not a valid cleanup task (needs Destroy/Disconnect or must be callable): %s", typeof(object)))
 
 	table.insert(trashSchedule, {
 		timeStamp = os.clock(),

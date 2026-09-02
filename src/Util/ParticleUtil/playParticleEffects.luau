@@ -1,3 +1,11 @@
+--[[
+  Debris Library
+  
+  By: Mystifine#4924
+  
+  Last Updated: 2026-09-01
+]]
+
 local RunService = game:GetService("RunService");
 
 local emitParticle = require(script.Parent.emitParticle);
@@ -24,20 +32,21 @@ return function(instance : Instance)
 		
 	local children = instance:GetDescendants();
 	for i = 1, #children do 
-		local child = children[i];
+		local child = children[i]
 		if child:IsA("ParticleEmitter") then
-			local emitCount = child:GetAttribute("EmitCount") or child.Rate;
-			local emitDelay = child:GetAttribute("EmitDelay") or 0;
-			local emitDuration = child:GetAttribute("EmitDuration") or 0;
+			child.Enabled = false -- reset regardless of prior in-flight state
+	
+			local emitCount = child:GetAttribute("EmitCount") or child.Rate
+			local emitDelay = child:GetAttribute("EmitDelay") or 0
+			local emitDuration = child:GetAttribute("EmitDuration") or 0
 			
 			emissionDictionary[child] = {
 				entryTime = os.clock(),
 				emitTime = nil,
-				
 				emitCount = emitCount,
 				emitDelay = emitDelay,
-				emitDuration = emitDuration
-			}	
+				emitDuration = emitDuration,
+			}
 		end
 	end
 	
