@@ -9,16 +9,21 @@ local SUFFIXES = {
 }
 
 -- Abbreviates large numbers to a shorter format with suffixes (K, M, B, etc.).
+-- Below 1000, the raw number is returned untouched. At 1000+, decimal
+-- formatting kicks in once a suffix applies.
 -- @param num: The number to abbreviate.
+-- @param decimals: Number of decimal places to show once abbreviated (default 1).
 -- @return: Abbreviated number string.
-function StringUtil.abbrev(num : number)
+function StringUtil.abbrev(num : number, decimals : number?)
+	decimals = decimals or 1;
+
 	if not num or num ~= num then return "0" end;
 
 	local isNegative = num < 0;
 	num = math.abs(num);
 
 	if num < 1000 then
-		return (isNegative and "-" or "") .. tostring(num)
+		return (isNegative and "-" or "") .. tostring(num);
 	end
 
 	local power = math.floor(math.log10(num));
@@ -26,18 +31,11 @@ function StringUtil.abbrev(num : number)
 
 	if suffixIndex > #SUFFIXES then
 		local mantissa = num / (10 ^ power);
-		return string.format("%s%.2fe%d",isNegative and "-" or "", mantissa, power);
+		return string.format("%s%." .. decimals .. "fe%d", isNegative and "-" or "", mantissa, power);
 	end
 
 	local displayNum = num / (10 ^ (suffixIndex * 3));
-	local formatString;
-	if displayNum < 10 then
-		formatString = "%.1f%s"
-	else
-		formatString = "%.0f%s"
-	end
-
-	return (isNegative and "-" or "") .. string.format(formatString, displayNum, SUFFIXES[suffixIndex])
+	return (isNegative and "-" or "") .. string.format("%." .. decimals .. "f%s", displayNum, SUFFIXES[suffixIndex]);
 end
 
 -- Formats a number with comma separators for thousands.
