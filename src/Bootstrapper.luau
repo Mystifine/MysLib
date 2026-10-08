@@ -4,27 +4,36 @@ local Bootstrapper = {}
 -- @param err: The error message.
 -- @return: Formatted traceback.
 function Bootstrapper.errorHandler(err)
-	return debug.traceback(err, 2);
+	return debug.traceback(err, 2)
 end
 
 -- Loads and executes a module's main() function with error protection.
--- @param name: Identifier for the module (used in logging).
--- @param module: The module to load.
-function Bootstrapper.loadModule(name : string, module : ModuleScript, ...)
-	local loadedModule = require(module);
+-- @param module: The ModuleScript to load.
+-- @param ...: Arguments to pass to the module's main() function.
+function Bootstrapper.loadModule(module : ModuleScript, ...)
+	
+	local requireSuccess, result = xpcall(require, Bootstrapper.errorHandler, module)
 
-	if type(loadedModule.main) ~= "function" then
-		warn(string.format("%s.loadModule => Module '%s' has no main()", name, module:GetFullName()))
+	if not requireSuccess then
+		warn(string.format("[loadModule] Failed to REQUIRE module '%s'\nError: %s", module:GetFullName(), tostring(result)))
 		return
 	end
-	print(string.format("%s.loadModule => Loading Module '%s'", name, module:GetFullName()));
 
-	local loadSuccess, loadResult = xpcall(loadedModule.main, Bootstrapper.errorHandler, ...)
+	local loadedModule = result
 
-	if not loadSuccess then
-		warn(string.format("%s.loadModule => Failed to load module '%s'\nError Reason: %s", name, module:GetFullName(), tostring(loadResult)));
+	if type(loadedModule.main) ~= "function" then
+		warn(string.format("[loadModule] Module '%s' has no main() function", module:GetFullName()))
+		return
+	end
+	
+	print(string.format("[loadModule] Loading module '%s'...", module:GetFullName()))
+
+	local mainSuccess, mainResult = xpcall(loadedModule.main, Bootstrapper.errorHandler, ...)
+
+	if not mainSuccess then
+		warn(string.format("[loadModule] Failed to run MAIN() for module '%s'\nError: %s", module:GetFullName(), tostring(mainResult)))
 	else
-		print(string.format("%s.loadModule => Module '%s' successfully loaded", name, module:GetFullName()));
+		print(string.format("[loadModule] Module '%s' successfully loaded", module:GetFullName()))
 	end
 end
 
