@@ -1530,7 +1530,7 @@
 </code></pre></div>
 <hr />
 <h3 id="projectile-hitbox">Projectile Hitbox</h3>
-<p>Raycasts along a path with velocity for projectile detection.</p>
+<p>Raycasts along a path with velocity for projectile detection. Rays are cast in a grid centred on <code>cframe</code>, spanning <code>width</code> × <code>height</code> with at most 1 stud between rays, and travel along the cframe's look direction. When several rays hit in the same frame, the nearest hit is reported. The projectile stops after its first hit, or once <code>lifetime</code> seconds have passed.</p>
 <div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">projectile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">Hitbox</span><span class="p">.</span><span class="nf">projectile</span><span class="p">({</span>
 <span class="w">    </span><span class="nv">cframe</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">workspace</span><span class="p">.</span><span class="py">Weapon</span><span class="p">.</span><span class="py">CFrame</span><span class="p">,</span>
 <span class="w">    </span><span class="nv">velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
@@ -1548,6 +1548,7 @@
 <p>Begins continuous collision detection every frame.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">hitbox</span><span class="p">:</span><span class="nf">Start</span><span class="p">()</span>
 </code></pre></div>
+<p>If a hitbox errors while running, for example because its <code>cframe</code> was never set, it is stopped with a warning. Other hitboxes keep running.</p>
 <hr />
 <h3 id="stop">Stop</h3>
 <p>Stops continuous collision detection.</p>
@@ -1563,6 +1564,7 @@
 <p>Destroys the hitbox and cleans up resources.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">hitbox</span><span class="p">:</span><span class="nf">Destroy</span><span class="p">()</span>
 </code></pre></div>
+<p>Calling <code>Destroy()</code> inside <code>onHit</code> stops any remaining hits from that check being delivered, which is useful for single-target attacks.</p>
 <h2 id="configuration">Configuration</h2>
 <h3 id="common-options">Common Options</h3>
 <p>All hitbox types accept these configuration options:</p>
@@ -1604,8 +1606,8 @@
 </code></pre></div>
 <hr />
 <h3 id="getclosesttarget">getClosestTarget</h3>
-<p>Finds the closest target from a list of models.</p>
-<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">targets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nv">enemy1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nv">enemy2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span>
+<p>Finds the closest target from a set of models, measured to each model's <code>PrimaryPart</code>. Models without a <code>PrimaryPart</code> are skipped.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">targets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{[</span><span class="nv">enemy1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="nv">enemy2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span>
 <span class="kd">local</span><span class="w"> </span><span class="nv">closest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">Hitbox</span><span class="p">.</span><span class="nf">getClosestTarget</span><span class="p">(</span><span class="nv">position</span><span class="p">,</span><span class="w"> </span><span class="nv">targets</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="examples">Examples</h2>

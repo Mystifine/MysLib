@@ -1220,16 +1220,21 @@
 <p>String utilities for text manipulation and formatting.</p>
 <h2 id="methods">Methods</h2>
 <h3 id="abbrev">abbrev</h3>
-<p>Abbreviates large numbers to a shorter format with suffixes (K, M, B, T, etc.).</p>
-<div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1500</span><span class="p">)</span><span class="w">      </span><span class="c1">-- &quot;1.5K&quot;</span>
-<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span><span class="w">   </span><span class="c1">-- &quot;1M&quot;</span>
-<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1234567</span><span class="p">)</span><span class="w">   </span><span class="c1">-- &quot;1.2M&quot;</span>
+<p>Abbreviates large numbers to a shorter format with suffixes (K, M, B, T, etc.). Numbers below 1000 are returned unchanged.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">950</span><span class="p">)</span><span class="w">         </span><span class="c1">-- &quot;950&quot;</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1500</span><span class="p">)</span><span class="w">        </span><span class="c1">-- &quot;1.5K&quot;</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span><span class="w">     </span><span class="c1">-- &quot;1.0M&quot;</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1234567</span><span class="p">)</span><span class="w">     </span><span class="c1">-- &quot;1.2M&quot;</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1234567</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">  </span><span class="c1">-- &quot;1.23M&quot;</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">999999</span><span class="p">)</span><span class="w">      </span><span class="c1">-- &quot;1.0M&quot; (rounds into the next suffix)</span>
 </code></pre></div>
+<p>The optional second argument sets the decimal places (default 1). Numbers past the last suffix use scientific notation, such as <code>"1.0e69"</code>.</p>
 <hr />
 <h3 id="addcommas">addCommas</h3>
 <p>Formats a number with comma separators for thousands.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">addCommas</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span><span class="w">   </span><span class="c1">-- &quot;1,000,000&quot;</span>
 <span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">addCommas</span><span class="p">(</span><span class="mi">50000</span><span class="p">)</span><span class="w">     </span><span class="c1">-- &quot;50,000&quot;</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">addCommas</span><span class="p">(</span><span class="o">-</span><span class="mf">1234.5</span><span class="p">)</span><span class="w">   </span><span class="c1">-- &quot;-1,234.5&quot;</span>
 </code></pre></div>
 <hr />
 <h3 id="formattime">formatTime</h3>
@@ -1237,10 +1242,15 @@
 <div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">formatTime</span><span class="p">(</span><span class="mi">3665</span><span class="p">)</span><span class="w">      </span><span class="c1">-- &quot;0d 1h 1m 5s&quot;</span>
 <span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">formatTime</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span><span class="w">       </span><span class="c1">-- &quot;0d 0h 2m 0s&quot;</span>
 <span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">formatTime</span><span class="p">(</span><span class="mi">86400</span><span class="p">)</span><span class="w">     </span><span class="c1">-- &quot;1d 0h 0m 0s&quot;</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">formatTime</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span><span class="w">        </span><span class="c1">-- &quot;-0d 0h 0m 5s&quot;</span>
 </code></pre></div>
 <hr />
 <h3 id="richtext">RichText</h3>
-<p>Sub-module for rich text formatting (color, bold, size, etc.).</p>
+<p>Sub-module for rich text formatting: <code>bold</code>, <code>italic</code>, <code>underline</code>, <code>strikethrough</code>, <code>size</code>, <code>color</code>, <code>stroke</code> and <code>transparency</code>.</p>
+<p>Use <code>RichText.escape</code> on any text you don't control, such as player names or chat, before formatting it. Otherwise characters like <code>&lt;</code> can break or inject tags.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">RichText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="py">RichText</span>
+<span class="nv">label</span><span class="p">.</span><span class="py">Text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">RichText</span><span class="p">.</span><span class="nf">bold</span><span class="p">(</span><span class="nv">RichText</span><span class="p">.</span><span class="nf">escape</span><span class="p">(</span><span class="nv">player</span><span class="p">.</span><span class="py">DisplayName</span><span class="p">))</span>
+</code></pre></div>
 <h2 id="examples">Examples</h2>
 <h3 id="leaderboard-display">Leaderboard Display</h3>
 <div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345678</span>

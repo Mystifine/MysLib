@@ -544,10 +544,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#removetask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RemoveTask
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#destroy-docleaning" class="md-nav__link">
     <span class="md-ellipsis">
       
         Destroy / DoCleaning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maidcleanuptask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maid.cleanupTask
       
     </span>
   </a>
@@ -1109,10 +1131,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#removetask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RemoveTask
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#destroy-docleaning" class="md-nav__link">
     <span class="md-ellipsis">
       
         Destroy / DoCleaning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maidcleanuptask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maid.cleanupTask
       
     </span>
   </a>
@@ -1222,9 +1266,18 @@
 <span class="c1">-- AddTask is an alias</span>
 <span class="nv">maid</span><span class="p">:</span><span class="nf">AddTask</span><span class="p">(</span><span class="nv">connection</span><span class="p">)</span>
 </code></pre></div>
+<p>Pass a key as the second argument to replace a task later. Giving a different task under the same key cleans up the previous one first:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">maid</span><span class="p">:</span><span class="nf">GiveTask</span><span class="p">(</span><span class="nv">effectA</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;effect&quot;</span><span class="p">)</span>
+<span class="nv">maid</span><span class="p">:</span><span class="nf">GiveTask</span><span class="p">(</span><span class="nv">effectB</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;effect&quot;</span><span class="p">)</span><span class="w">  </span><span class="c1">-- effectA is cleaned up</span>
+</code></pre></div>
+<hr />
+<h3 id="removetask">RemoveTask</h3>
+<p>Cleans up and forgets the task stored under a key.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">maid</span><span class="p">:</span><span class="nf">RemoveTask</span><span class="p">(</span><span class="s2">&quot;effect&quot;</span><span class="p">)</span>
+</code></pre></div>
 <hr />
 <h3 id="destroy-docleaning">Destroy / DoCleaning</h3>
-<p>Cleans up all tasks in the maid:
+<p>Cleans up all tasks in the maid, in the order they were given:
 - Functions are called
 - Connections are disconnected
 - Instances are destroyed</p>
@@ -1232,6 +1285,12 @@
 
 <span class="c1">-- DoCleaning is an alias</span>
 <span class="nv">maid</span><span class="p">:</span><span class="nf">DoCleaning</span><span class="p">()</span>
+</code></pre></div>
+<p>Each task runs once. If a task errors, a warning with a traceback is printed and the remaining tasks are still cleaned. Tasks added while cleaning are cleaned too, and the maid can be reused afterwards.</p>
+<hr />
+<h3 id="maidcleanuptask">Maid.cleanupTask</h3>
+<p>Cleans up a single task using the same rules, without a maid. Errors are not caught.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">Maid</span><span class="p">.</span><span class="nf">cleanupTask</span><span class="p">(</span><span class="nv">connection</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="examples">Examples</h2>
 <h3 id="managing-connections">Managing Connections</h3>

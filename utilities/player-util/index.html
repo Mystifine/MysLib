@@ -1226,8 +1226,8 @@
 <span class="kr">end</span>
 </code></pre></div>
 <p>Validates:
-- Character exists and is in workspace
-- Humanoid exists and health &gt; 0
+- Character exists and has a Parent
+- A Humanoid exists (found by class, so its name doesn't matter) and health &gt; 0
 - Humanoid is not in Dead state
 - PrimaryPart exists and is part of character</p>
 <hr />
@@ -1251,15 +1251,17 @@
 </code></pre></div>
 <hr />
 <h3 id="getplayerthumbnailfromuserid">getPlayerThumbnailFromUserId</h3>
-<p>Gets a player's avatar thumbnail URL from their user ID.</p>
+<p>Gets a player's avatar thumbnail from their user ID. Defaults to a 420x420 headshot; results are cached, and an empty string is returned on failure.</p>
 <div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">thumbnail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">PlayerUtil</span><span class="p">.</span><span class="nf">getPlayerThumbnailFromUserId</span><span class="p">(</span><span class="mi">123456789</span><span class="p">)</span>
-<span class="c1">-- Use in GUI ImageLabel.Image = thumbnail</span>
+<span class="nv">imageLabel</span><span class="p">.</span><span class="py">Image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">thumbnail</span>
+
+<span class="kd">local</span><span class="w"> </span><span class="nv">bust</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">PlayerUtil</span><span class="p">.</span><span class="nf">getPlayerThumbnailFromUserId</span><span class="p">(</span><span class="nv">userId</span><span class="p">,</span><span class="w"> </span><span class="nv">Enum</span><span class="p">.</span><span class="py">ThumbnailType</span><span class="p">.</span><span class="py">AvatarBust</span><span class="p">,</span><span class="w"> </span><span class="nv">Enum</span><span class="p">.</span><span class="py">ThumbnailSize</span><span class="p">.</span><span class="py">Size150x150</span><span class="p">)</span>
 </code></pre></div>
 <hr />
 <h3 id="getmousehit">getMouseHit</h3>
-<p>Gets the mouse position in 3D space. <strong>Client-only function</strong>.</p>
-<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">PlayerUtil</span><span class="p">.</span><span class="nf">getMouseHit</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="nv">position</span><span class="p">)</span><span class="w">  </span><span class="c1">-- Vector3 position</span>
+<p>Gets where the mouse is pointing in 3D space, as a <code>CFrame</code> facing along the aim direction. Ignores the local character and a <code>workspace.VISUALS</code> folder if present. On mobile the screen centre is used. <strong>Client-only function</strong>.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">hit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">PlayerUtil</span><span class="p">.</span><span class="nf">getMouseHit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nv">hit</span><span class="p">.</span><span class="py">Position</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="examples">Examples</h2>
 <h3 id="check-before-action">Check Before Action</h3>

@@ -548,6 +548,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#disconnectall-destroy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DisconnectAll / Destroy
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1163,6 +1174,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#disconnectall-destroy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DisconnectAll / Destroy
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1251,8 +1273,9 @@
 <span class="kr">end</span><span class="p">)</span>
 
 <span class="nv">connection</span><span class="p">:</span><span class="nf">Disconnect</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nv">connection</span><span class="p">.</span><span class="py">Connected</span><span class="p">)</span><span class="w">  </span><span class="c1">-- false</span>
 </code></pre></div>
-<p><strong>Returns:</strong> <code>SignalConnection</code> — Object with <code>Disconnect()</code> method</p>
+<p><strong>Returns:</strong> <code>SignalConnection</code> — Object with a <code>Disconnect()</code> method and a <code>Connected</code> property. A connection disconnected while the signal is firing is not called.</p>
 <hr />
 <h3 id="fire">Fire</h3>
 <p>Fires the signal, calling all connected callbacks with the provided arguments.</p>
@@ -1276,7 +1299,13 @@
 <div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">signal</span><span class="p">:</span><span class="nf">Wait</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Signal fired with:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">value</span><span class="p">)</span>
 </code></pre></div>
-<p>Useful for waiting on one-time events without creating a connection.</p>
+<p>The values are returned exactly as passed to <code>Fire()</code>, so tables keep their identity and metatables.</p>
+<hr />
+<h3 id="disconnectall-destroy">DisconnectAll / Destroy</h3>
+<p>Disconnects every connection. The signal can still be used afterwards. <code>Destroy</code> is an alias, so a signal can be given to a <a href="../maid/">Maid</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">signal</span><span class="p">:</span><span class="nf">DisconnectAll</span><span class="p">()</span>
+<span class="nv">maid</span><span class="p">:</span><span class="nf">GiveTask</span><span class="p">(</span><span class="nv">signal</span><span class="p">)</span>
+</code></pre></div>
 <h2 id="examples">Examples</h2>
 <h3 id="simple-event-system">Simple Event System</h3>
 <div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">MysLib</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="p">(</span><span class="nv">MysLib</span><span class="p">)</span>

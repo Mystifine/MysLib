@@ -1224,7 +1224,7 @@
 <ol>
 <li>Edit your <code>wally.toml</code> file to include the following:
 <div class="highlight"><pre><span></span><code><span class="k">[dependencies]</span>
-<span class="n">myslib</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;mystifine/myslib@0.1.4&quot;</span>
+<span class="n">myslib</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;mystifine/myslib@0.2.8&quot;</span>
 </code></pre></div></li>
 <li>Run <code>wally install</code></li>
 </ol>
@@ -1283,10 +1283,10 @@
 <h3 id="utility-examples">Utility Examples</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">-- String abbreviation</span>
 <span class="nb">print</span><span class="p">(</span><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1500</span><span class="p">))</span><span class="w">     </span><span class="c1">-- &quot;1.5K&quot;</span>
-<span class="nb">print</span><span class="p">(</span><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1000000</span><span class="p">))</span><span class="w">  </span><span class="c1">-- &quot;1M&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">abbrev</span><span class="p">(</span><span class="mi">1000000</span><span class="p">))</span><span class="w">  </span><span class="c1">-- &quot;1.0M&quot;</span>
 
 <span class="c1">-- Format time</span>
-<span class="nb">print</span><span class="p">(</span><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">formatTime</span><span class="p">(</span><span class="mi">3665</span><span class="p">))</span><span class="w"> </span><span class="c1">-- &quot;1h 1m 5s&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="nv">MysLib</span><span class="p">.</span><span class="py">StringUtil</span><span class="p">.</span><span class="nf">formatTime</span><span class="p">(</span><span class="mi">3665</span><span class="p">))</span><span class="w"> </span><span class="c1">-- &quot;0d 1h 1m 5s&quot;</span>
 
 <span class="c1">-- Deep copy</span>
 <span class="kd">local</span><span class="w"> </span><span class="nv">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">TableUtil</span><span class="p">.</span><span class="nf">deepCopy</span><span class="p">(</span><span class="nv">originalTable</span><span class="p">)</span>

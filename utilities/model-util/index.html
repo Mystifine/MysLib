@@ -1198,21 +1198,25 @@
 <p>Model utilities for part selection, welding, and assembly.</p>
 <h2 id="methods">Methods</h2>
 <h3 id="getmodellargestpart">getModelLargestPart</h3>
-<p>Finds the largest part in a model by volume.</p>
-<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">largest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">ModelUtil</span><span class="p">.</span><span class="nf">getModelLargestPart</span><span class="p">(</span><span class="nv">model</span><span class="p">)</span>
+<p>Finds the part with the largest size (<code>Size.Magnitude</code>) among a model's descendants. Returns the part and its size, or <code>nil</code> if the model has no parts.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">largest</span><span class="p">,</span><span class="w"> </span><span class="nv">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">ModelUtil</span><span class="p">.</span><span class="nf">getModelLargestPart</span><span class="p">(</span><span class="nv">model</span><span class="p">)</span>
 </code></pre></div>
 <hr />
 <h3 id="weldconstraint">weldConstraint</h3>
-<p>Creates a weld constraint between two parts with optional offset.</p>
-<div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">ModelUtil</span><span class="p">.</span><span class="nf">weldConstraint</span><span class="p">(</span><span class="nv">part1</span><span class="p">,</span><span class="w"> </span><span class="nv">part2</span><span class="p">)</span>
-<span class="nv">MysLib</span><span class="p">.</span><span class="py">ModelUtil</span><span class="p">.</span><span class="nf">weldConstraint</span><span class="p">(</span><span class="nv">part1</span><span class="p">,</span><span class="w"> </span><span class="nv">part2</span><span class="p">,</span><span class="w"> </span><span class="nv">offset</span><span class="p">)</span>
+<p>Creates a <code>WeldConstraint</code> between two parts, parented to <code>part1</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">ModelUtil</span><span class="p">.</span><span class="nf">weldConstraint</span><span class="p">(</span><span class="nv">part0</span><span class="p">,</span><span class="w"> </span><span class="nv">part1</span><span class="p">)</span>
 </code></pre></div>
 <hr />
 <h3 id="weldmodel">weldModel</h3>
-<p>Welds all parts in a model together to a primary part.</p>
-<div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">ModelUtil</span><span class="p">.</span><span class="nf">weldModel</span><span class="p">(</span><span class="nv">model</span><span class="p">)</span>
+<p>Welds the model's direct child parts to its <code>PrimaryPart</code>, and sets every welded part to unanchored, non-colliding, non-touching and massless.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">model</span><span class="p">.</span><span class="py">PrimaryPart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">model</span><span class="p">.</span><span class="py">Body</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">ModelUtil</span><span class="p">.</span><span class="nf">weldModel</span><span class="p">(</span><span class="nv">model</span><span class="p">)</span>
 </code></pre></div>
-<p>Automatically selects the largest part as the primary and welds all others to it.</p>
+<ul>
+<li>The model must have a <code>PrimaryPart</code>; otherwise a warning is printed and nothing changes.</li>
+<li>Nested models are welded to <strong>their own</strong> <code>PrimaryPart</code>, so each stays a separate assembly that you can joint to the main one (for example with a hinge).</li>
+<li>Parts inside folders are not welded.</li>
+</ul>
 <h2 id="examples">Examples</h2>
 <h3 id="ragdoll-assembly">Ragdoll Assembly</h3>
 <div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">ragdoll</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">workspace</span><span class="p">:</span><span class="nf">FindFirstChild</span><span class="p">(</span><span class="s2">&quot;Ragdoll&quot;</span><span class="p">)</span>

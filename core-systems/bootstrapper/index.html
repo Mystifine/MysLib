@@ -1177,12 +1177,16 @@
 <h2 id="methods">Methods</h2>
 <h3 id="loadmodule">loadModule</h3>
 <p>Loads and executes a module's <code>main()</code> function with error protection.</p>
-<div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">Bootstrapper</span><span class="p">.</span><span class="nf">loadModule</span><span class="p">(</span><span class="nv">name</span><span class="p">,</span><span class="w"> </span><span class="nv">module</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">Bootstrapper</span><span class="p">.</span><span class="nf">loadModule</span><span class="p">(</span><span class="nv">module</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
 </code></pre></div>
 <p><strong>Parameters:</strong>
-- <code>name</code> — Identifier for logging (e.g., "GameServer")
-- <code>module</code> — The ModuleScript to load</p>
-<p>The module must export a <code>main()</code> function. Any errors are caught and logged without crashing.</p>
+- <code>module</code> — The ModuleScript to load
+- <code>...</code> — Arguments passed through to <code>main()</code></p>
+<p>The module must return a table with a <code>main()</code> function. Failures to require the module, a missing <code>main()</code>, and errors inside <code>main()</code> are all logged as warnings without crashing.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The older form <code>loadModule(name, module, ...)</code> from versions up to 0.2.6 is still accepted. The name is ignored; logs use the module's full name.</p>
+</div>
 <hr />
 <h3 id="errorhandler">errorHandler</h3>
 <p>Formats error messages with traceback for debugging.</p>
@@ -1194,8 +1198,8 @@
 <span class="kd">local</span><span class="w"> </span><span class="nv">Bootstrapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">Bootstrapper</span>
 
 <span class="c1">-- Load game modules</span>
-<span class="nv">Bootstrapper</span><span class="p">.</span><span class="nf">loadModule</span><span class="p">(</span><span class="s2">&quot;GameServer&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">workspace</span><span class="p">.</span><span class="py">GameModule</span><span class="p">)</span>
-<span class="nv">Bootstrapper</span><span class="p">.</span><span class="nf">loadModule</span><span class="p">(</span><span class="s2">&quot;PlayerManager&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">workspace</span><span class="p">.</span><span class="py">PlayerModule</span><span class="p">)</span>
+<span class="nv">Bootstrapper</span><span class="p">.</span><span class="nf">loadModule</span><span class="p">(</span><span class="nv">ServerScriptService</span><span class="p">.</span><span class="py">GameServer</span><span class="p">)</span>
+<span class="nv">Bootstrapper</span><span class="p">.</span><span class="nf">loadModule</span><span class="p">(</span><span class="nv">ServerScriptService</span><span class="p">.</span><span class="py">PlayerManager</span><span class="p">,</span><span class="w"> </span><span class="nv">config</span><span class="p">)</span><span class="w">  </span><span class="c1">-- config is passed to main()</span>
 </code></pre></div>
 <h3 id="module-with-main">Module with main()</h3>
 <p>Create a module that exports a <code>main()</code> function:</p>
@@ -1211,8 +1215,8 @@
 </code></pre></div>
 <h3 id="error-handling">Error Handling</h3>
 <p>If a module crashes, it logs the error without stopping the game:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">Bootstrapper</span><span class="p">.</span><span class="nf">loadModule</span><span class="p">(</span><span class="s2">&quot;CrashingModule&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">workspace</span><span class="p">.</span><span class="py">BadModule</span><span class="p">)</span>
-<span class="c1">-- Output: [warning] CrashingModule.loadModule =&gt; Failed to load module...</span>
+<div class="highlight"><pre><span></span><code><span class="nv">Bootstrapper</span><span class="p">.</span><span class="nf">loadModule</span><span class="p">(</span><span class="nv">ServerScriptService</span><span class="p">.</span><span class="py">BadModule</span><span class="p">)</span>
+<span class="c1">-- Output: [loadModule] Failed to run MAIN() for module &#39;ServerScriptService.BadModule&#39; ...</span>
 <span class="c1">-- Game continues running</span>
 </code></pre></div>
 

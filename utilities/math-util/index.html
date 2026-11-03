@@ -1242,9 +1242,10 @@
 <p>Mathematical utilities for calculations, interpolation, and Bézier curves.</p>
 <h2 id="methods">Methods</h2>
 <h3 id="truncate">truncate</h3>
-<p>Truncates a number to a specified number of decimal places.</p>
+<p>Truncates a number to a specified number of decimal places, rounding toward zero.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">MysLib</span><span class="p">.</span><span class="py">MathUtil</span><span class="p">.</span><span class="nf">truncate</span><span class="p">(</span><span class="mf">3.14159</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">   </span><span class="c1">-- 3.14</span>
 <span class="nv">MysLib</span><span class="p">.</span><span class="py">MathUtil</span><span class="p">.</span><span class="nf">truncate</span><span class="p">(</span><span class="mf">2.99999</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">   </span><span class="c1">-- 2.9</span>
+<span class="nv">MysLib</span><span class="p">.</span><span class="py">MathUtil</span><span class="p">.</span><span class="nf">truncate</span><span class="p">(</span><span class="o">-</span><span class="mf">3.14159</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -3.14</span>
 </code></pre></div>
 <hr />
 <h3 id="randomnumber-rng">randomNumber / rng</h3>

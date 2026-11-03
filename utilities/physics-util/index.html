@@ -871,6 +871,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1086,6 +1097,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1195,8 +1217,23 @@
 <strong>SetMaxForce</strong> — Update the maximum force per axis<br />
 <strong>Destroy</strong> — Stop and clean up</p>
 <hr />
+<h3 id="priority">Priority</h3>
+<p>Creating a velocity on a part destroys any existing MysLib velocity on that part with an <strong>equal or lower</strong> priority. Higher-priority velocities are left in place.</p>
+<hr />
 <h2 id="orientation">Orientation</h2>
-<p>Handles angular velocity and rotation constraints.</p>
+<p>Holds a part at a target rotation using an <code>AlignOrientation</code>, with the same priority rules as Velocity.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">orient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">MysLib</span><span class="p">.</span><span class="py">PhysicsUtil</span><span class="p">.</span><span class="py">Orientation</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+<span class="w">    </span><span class="nv">part</span><span class="p">,</span><span class="w">                               </span><span class="c1">-- BasePart to rotate</span>
+<span class="w">    </span><span class="mi">10000</span><span class="p">,</span><span class="w">                              </span><span class="c1">-- MaxTorque</span>
+<span class="w">    </span><span class="nv">CFrame</span><span class="p">.</span><span class="nf">Angles</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">math.rad</span><span class="p">(</span><span class="mi">90</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w">  </span><span class="c1">-- Target orientation</span>
+<span class="w">    </span><span class="mi">2</span><span class="p">,</span><span class="w">                                  </span><span class="c1">-- Duration in seconds (-1 for infinite)</span>
+<span class="w">    </span><span class="mi">1</span><span class="w">                                   </span><span class="c1">-- Priority (higher overrides lower)</span>
+<span class="p">)</span>
+
+<span class="nv">orient</span><span class="p">:</span><span class="nf">SetCFrame</span><span class="p">(</span><span class="nv">CFrame</span><span class="p">.</span><span class="nf">Angles</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">math.rad</span><span class="p">(</span><span class="mi">180</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+<span class="nv">orient</span><span class="p">:</span><span class="nf">SetMaxTorque</span><span class="p">(</span><span class="mi">20000</span><span class="p">)</span>
+<span class="nv">orient</span><span class="p">:</span><span class="nf">Destroy</span><span class="p">()</span>
+</code></pre></div>
 <hr />
 <h2 id="gethorizontalnormalizedvector">getHorizontalNormalizedVector</h2>
 <p>Calculates a normalized 2D vector (ignoring Y axis).</p>
