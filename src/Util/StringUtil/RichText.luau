@@ -1,5 +1,34 @@
 local RichText = {}
 
+-- Color3 channels are stored as floats, so round rather than truncate when converting to 0-255.
+local function toRGB(color : Color3) : (number, number, number)
+	return math.round(color.R * 255), math.round(color.G * 255), math.round(color.B * 255)
+end
+
+local ESCAPES = {
+	["&"] = "&amp;",
+	["<"] = "&lt;",
+	[">"] = "&gt;",
+	['"'] = "&quot;",
+	["'"] = "&apos;",
+}
+
+--[=[
+	Escapes rich text markup characters, so untrusted text (player names, chat) shows literally
+	and cannot inject or break tags. Escape the text before wrapping it with the other functions.
+
+	@param text string -- Text to escape
+	@return string -- Text safe to place inside rich text
+
+
+	```lua
+	local label = RichText.bold(RichText.escape(player.DisplayName))
+	```
+]=]
+function RichText.escape(text : string) : string
+	return (string.gsub(text, "[&<>\"']", ESCAPES))
+end
+
 --[=[
 	Makes text bold using rich text formatting.
 
@@ -66,7 +95,8 @@ end
 	@return string -- Stroked formatted text
 ]=]
 function RichText.stroke(text : string, stroke_color : Color3, thickness : number, transparency : number) : string
-	return string.format('<stroke color="rgb(%d,%d,%d)" joins="miter" thickness="%d" transparency="%f">%s</stroke>', stroke_color.R*255, stroke_color.G*255, stroke_color.B*255, thickness, transparency, text)
+	local r, g, b = toRGB(stroke_color)
+	return string.format('<stroke color="rgb(%d,%d,%d)" joins="miter" thickness="%d" transparency="%f">%s</stroke>', r, g, b, thickness, transparency, text)
 end
 
 --[=[
@@ -82,7 +112,8 @@ end
 	```
 ]=]
 function RichText.color(text : string, rgb : Color3) : string
-	return string.format('<font color="rgb(%d,%d,%d)">%s</font>',rgb.R*255,rgb.G*255,rgb.B*255,text)
+	local r, g, b = toRGB(rgb)
+	return string.format('<font color="rgb(%d,%d,%d)">%s</font>',r,g,b,text)
 end
 
 --[=[

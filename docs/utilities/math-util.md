@@ -6,11 +6,12 @@ Mathematical utilities for calculations, interpolation, and Bézier curves.
 
 ### truncate
 
-Truncates a number to a specified number of decimal places.
+Truncates a number to a specified number of decimal places, rounding toward zero.
 
 ```lua
 MysLib.MathUtil.truncate(3.14159, 2)   -- 3.14
 MysLib.MathUtil.truncate(2.99999, 1)   -- 2.9
+MysLib.MathUtil.truncate(-3.14159, 2)  -- -3.14
 ```
 
 ---

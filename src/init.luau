@@ -1,6 +1,6 @@
 --[[
 	Written By: Mystifine
-	Last Updated: 2025-12-07
+	Last Updated: 2026-11-02
 
 	MysLib is a comprehensive utility library for Roblox game development.
 	It provides a collection of modules to simplify common tasks and improve code organization.
@@ -8,7 +8,8 @@
 
 local MysLib = {}
 
-MysLib.Version = "0.1.4"
+-- Keep in sync with wally.toml; tests/specs/Version.spec.luau checks this.
+MysLib.Version = "0.2.8"
 
 --[[
 	Utility modules for various common tasks.

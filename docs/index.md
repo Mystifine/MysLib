@@ -1,5 +1,5 @@
 # MysLib
-**Version:** 0.2.6
+**Version:** 0.2.8
 
 A comprehensive Roblox utility library providing essential tools for game development, written in Luau.
 

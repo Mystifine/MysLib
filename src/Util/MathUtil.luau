@@ -1,6 +1,6 @@
 local MathUtil = {}
 
--- Truncates a number to a specified number of decimal places.
+-- Truncates a number to a specified number of decimal places, rounding toward zero.
 -- @param value: The number to truncate.
 -- @param decimal_places: Number of decimal places to keep.
 -- @return: Truncated number.
@@ -9,7 +9,17 @@ function MathUtil.truncate(value : number, decimal_places : number)
 		decimal_places = 0;
 	end
 	local multiplier = 1 * math.pow(10, decimal_places);
-	return math.floor(value * multiplier) / multiplier
+	local scaled = value * multiplier;
+
+	-- Undo floating point error that would otherwise drop a digit, e.g. 0.29 * 100 = 28.999999999999996.
+	local nearest = math.round(scaled);
+	if math.abs(scaled - nearest) <= 1e-9 * math.max(1, math.abs(scaled)) then
+		scaled = nearest;
+	end
+
+	local truncated = if scaled < 0 then math.ceil(scaled) else math.floor(scaled);
+	-- Adding 0 turns -0 into 0.
+	return truncated / multiplier + 0
 end
 
 -- Generates a random number between min and max.

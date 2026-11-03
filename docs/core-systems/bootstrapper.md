@@ -9,14 +9,17 @@ Module loading and initialization with error protection. Safely load game module
 Loads and executes a module's `main()` function with error protection.
 
 ```lua
-MysLib.Bootstrapper.loadModule(name, module)
+MysLib.Bootstrapper.loadModule(module, ...)
 ```
 
 **Parameters:**
-- `name` — Identifier for logging (e.g., "GameServer")
 - `module` — The ModuleScript to load
+- `...` — Arguments passed through to `main()`
 
-The module must export a `main()` function. Any errors are caught and logged without crashing.
+The module must return a table with a `main()` function. Failures to require the module, a missing `main()`, and errors inside `main()` are all logged as warnings without crashing.
+
+!!! note
+    The older form `loadModule(name, module, ...)` from versions up to 0.2.6 is still accepted. The name is ignored; logs use the module's full name.
 
 ---
 
@@ -37,8 +40,8 @@ local MysLib = require(MysLib)
 local Bootstrapper = MysLib.Bootstrapper
 
 -- Load game modules
-Bootstrapper.loadModule("GameServer", workspace.GameModule)
-Bootstrapper.loadModule("PlayerManager", workspace.PlayerModule)
+Bootstrapper.loadModule(ServerScriptService.GameServer)
+Bootstrapper.loadModule(ServerScriptService.PlayerManager, config)  -- config is passed to main()
 ```
 
 ### Module with main()
@@ -62,7 +65,7 @@ return MyModule
 If a module crashes, it logs the error without stopping the game:
 
 ```lua
-Bootstrapper.loadModule("CrashingModule", workspace.BadModule)
--- Output: [warning] CrashingModule.loadModule => Failed to load module...
+Bootstrapper.loadModule(ServerScriptService.BadModule)
+-- Output: [loadModule] Failed to run MAIN() for module 'ServerScriptService.BadModule' ...
 -- Game continues running
 ```

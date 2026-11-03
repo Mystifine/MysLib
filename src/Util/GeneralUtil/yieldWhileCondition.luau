@@ -11,7 +11,9 @@ export type YieldWhileConditionConfigs = {
 --[=[
 	Yields while a condition is true or until a timeout is reached.
 
-	@param config YieldWhileConditionConfigs -- Configuration table
+	Passing a function instead of a config table waits, with no time limit, until it returns false.
+
+	@param config YieldWhileConditionConfigs | () -> boolean? -- Configuration table, or a condition function
 	@return boolean -- true if duration met, false if condition became false
 
 	
@@ -33,7 +35,14 @@ export type YieldWhileConditionConfigs = {
 	})
 	```
 ]=]
-return function(YieldWhileConditionConfigs : YieldWhileConditionConfigs)
+return function(YieldWhileConditionConfigs : YieldWhileConditionConfigs | () -> boolean?)
+	if type(YieldWhileConditionConfigs) == "function" then
+		YieldWhileConditionConfigs = {
+			condition = YieldWhileConditionConfigs,
+			duration = math.huge,
+		};
+	end
+
 	local duration = YieldWhileConditionConfigs.duration or 0;
 	local startTime = os.clock();
 

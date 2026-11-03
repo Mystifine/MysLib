@@ -5,7 +5,8 @@ return function(character : Model) : boolean
 	if not character then return false end;
 	if character.Parent == nil then return false end;
 
-	local humanoid = character:FindFirstChild("Humanoid");
+	-- By class rather than name, so a renamed Humanoid counts and a non-Humanoid named "Humanoid" does not.
+	local humanoid = character:FindFirstChildOfClass("Humanoid");
 	if not humanoid then return false end;
 
 	if humanoid.Health <= 0 then return false end;

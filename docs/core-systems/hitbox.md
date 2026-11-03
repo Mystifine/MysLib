@@ -53,7 +53,7 @@ local hitbox = MysLib.Hitbox.basePart({
 
 ### Projectile Hitbox
 
-Raycasts along a path with velocity for projectile detection.
+Raycasts along a path with velocity for projectile detection. Rays are cast in a grid centred on `cframe`, spanning `width` × `height` with at most 1 stud between rays, and travel along the cframe's look direction. When several rays hit in the same frame, the nearest hit is reported. The projectile stops after its first hit, or once `lifetime` seconds have passed.
 
 ```lua
 local projectile = MysLib.Hitbox.projectile({
@@ -79,6 +79,8 @@ Begins continuous collision detection every frame.
 ```lua
 hitbox:Start()
 ```
+
+If a hitbox errors while running, for example because its `cframe` was never set, it is stopped with a warning. Other hitboxes keep running.
 
 ---
 
@@ -109,6 +111,8 @@ Destroys the hitbox and cleans up resources.
 ```lua
 hitbox:Destroy()
 ```
+
+Calling `Destroy()` inside `onHit` stops any remaining hits from that check being delivered, which is useful for single-target attacks.
 
 ## Configuration
 
@@ -168,10 +172,10 @@ local result = MysLib.Hitbox.spherecast(
 
 ### getClosestTarget
 
-Finds the closest target from a list of models.
+Finds the closest target from a set of models, measured to each model's `PrimaryPart`. Models without a `PrimaryPart` are skipped.
 
 ```lua
-local targets = {enemy1 = true, enemy2 = true}
+local targets = {[enemy1] = true, [enemy2] = true}
 local closest = MysLib.Hitbox.getClosestTarget(position, targets)
 ```
 

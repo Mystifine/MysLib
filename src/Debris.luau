@@ -1,17 +1,15 @@
 --[[
   Debris Library
-  
+
   By: Mystifine#4924
-  
-  Last Updated: 2026-09-01
+
+  Last Updated: 2026-11-02
 ]]
 
 local RunService = game:GetService("RunService")
 
 local Maid = require(script.Parent.Maid);
 local GeneralUtil = require(script.Parent.Util.GeneralUtil);
-
-local trashCollector = Maid.new();
 
 export type DebrisLib = {
 	AddItem : (object : Instance | {}, destroyTime : number) -> nil,
@@ -23,31 +21,43 @@ local Debris = {}
 local heartbeatEventConnection : RBXScriptConnection? = nil;
 local trashSchedule : {
 	[number] : {
-		timeStamp : number, 
-		destroyTime : number, 
+		timeStamp : number,
+		destroyTime : number,
 		item : Instance | {}
 	}
 } = {};
 
-local function onHeartbeat()
-	local index = #trashSchedule
-	while index >= 1 do
-		local trash = trashSchedule[index]
-		if os.clock() - trash.timeStamp >= trash.destroyTime then
-			local ok, err = pcall(function()
-				trashCollector:GiveTask(trash.item)
-				trashCollector:DoCleaning()
-			end)
-			if not ok then
-				GeneralUtil.warn(script.Name, "onHeartbeat => Failed to clean up item: " .. tostring(err))
-			end
-			table.remove(trashSchedule, index)
-		end
-		index -= 1
+local function cleanupItem(item)
+	local ok, err = pcall(Maid.cleanupTask, item)
+	if not ok then
+		GeneralUtil.warn(script.Name, "onHeartbeat => Failed to clean up item: " .. tostring(err))
 	end
-	
-	if #trashSchedule == 0 then
-		heartbeatEventConnection = heartbeatEventConnection and heartbeatEventConnection:Disconnect();
+end
+
+local function onHeartbeat()
+	local now = os.clock()
+	local remaining = {}
+	local expired = {}
+	for _, trash in ipairs(trashSchedule) do
+		if now - trash.timeStamp >= trash.destroyTime then
+			table.insert(expired, trash.item)
+		else
+			table.insert(remaining, trash)
+		end
+	end
+
+	-- Expired items leave the schedule before any cleanup runs, so a cleanup that yields,
+	-- errors, or calls AddItem/RemoveItem cannot run an item twice or skip another one.
+	trashSchedule = remaining
+
+	-- Newest first, matching the order items have always been cleaned in.
+	for i = #expired, 1, -1 do
+		task.spawn(cleanupItem, expired[i])
+	end
+
+	if #trashSchedule == 0 and heartbeatEventConnection then
+		heartbeatEventConnection:Disconnect()
+		heartbeatEventConnection = nil
 	end
 end
 

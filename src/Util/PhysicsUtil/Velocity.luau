@@ -40,7 +40,7 @@ function Velocity.new(basePart : BasePart, maxForce : Vector3, velocity : Vector
 		-- If it's not a Attachment created by our module then ignore it
 		if not (child:IsA("Attachment") and child.Name == ATTACHMENT_NAME) then continue end;
 
-		local bodyVelocityPriority = child:GetAttribute("velocityPriority");
+		local bodyVelocityPriority = child:GetAttribute("velocityPriority") or 0;
 		-- Check priority for equal or less than
 		if priority >= bodyVelocityPriority then
 			-- Destroy lower priority attachment and linear velocity
@@ -52,8 +52,9 @@ function Velocity.new(basePart : BasePart, maxForce : Vector3, velocity : Vector
 	self.attachment = Instance.new("Attachment")
 	self.attachment.Name = ATTACHMENT_NAME;
 	self.attachment.Position = basePart.CFrame:PointToObjectSpace(basePart.AssemblyCenterOfMass);
-	self.attachment.Parent = basePart;
+	-- Set before parenting, so code reacting to ChildAdded already sees the priority.
 	self.attachment:SetAttribute("velocityPriority", priority);
+	self.attachment.Parent = basePart;
 
 	-- Create LinearVelocity
 	self.linearVelocity = Instance.new("LinearVelocity");

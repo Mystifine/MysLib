@@ -18,6 +18,10 @@ local heartbeatConnection = nil
 local heartbeatId = 0
 local activeCallbacks : {[string] : SteppedConnection} = {}
 
+local function errorHandler(err)
+	return debug.traceback(tostring(err), 2)
+end
+
 local function handleSteppedUpdate()
 	if next(activeCallbacks) == nil then
 		if heartbeatConnection then
@@ -29,7 +33,8 @@ local function handleSteppedUpdate()
 
 	-- Shallow copy to avoid mutation issues
 	local tempCallbacks : {[number] : {stepped : SteppedConnection, elapsed : number}} = {};
-	local now = workspace:GetServerTimeNow();
+	-- os.clock is monotonic; GetServerTimeNow can jump when the client re-syncs its clock.
+	local now = os.clock();
 	for _, obj in pairs(activeCallbacks) do
 		local elapsed = now - obj.LastCallback;
 		if elapsed >= obj.Cooldown then
@@ -43,7 +48,14 @@ local function handleSteppedUpdate()
 
 	for i = 1, #tempCallbacks do
 		local heartbeatInfo = tempCallbacks[i];
-		local ok ,err = pcall(heartbeatInfo.stepped.Callback, heartbeatInfo.elapsed);
+		local stepped = heartbeatInfo.stepped;
+
+		-- Skip connections that an earlier callback disconnected this frame.
+		if activeCallbacks[stepped.SteppedId] ~= stepped then
+			continue;
+		end
+
+		local ok ,err = xpcall(stepped.Callback, errorHandler, heartbeatInfo.elapsed);
 
 		if not ok then
 			-- Throw warning with traceback
@@ -94,7 +106,7 @@ function Stepped.new(onStepped : (deltaTime : number) -> nil, cooldown : number?
 	self.SteppedId = tostring(heartbeatId)
 	self.Callback = onStepped
 	self.Cooldown = cooldown;
-	self.LastCallback = workspace:GetServerTimeNow() - cooldown;
+	self.LastCallback = os.clock() - cooldown;
 
 	activeCallbacks[self.SteppedId] = self;
 

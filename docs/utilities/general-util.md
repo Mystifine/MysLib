@@ -18,6 +18,8 @@ heartbeat:Disconnect()
 - `callback` — Function called each heartbeat, receives elapsed time
 - `cooldown` — Minimum time between calls (default: 0)
 
+An error in one callback is printed as a warning with a traceback and does not stop the others.
+
 ---
 
 ## Stepped
@@ -45,14 +47,27 @@ end)
 print("Character died")
 ```
 
+Pass a config table instead to add a time limit and callbacks. It returns `true` if the condition held for the whole `duration`, or `false` if it became false first:
+
+```lua
+local channelled = MysLib.GeneralUtil.yieldWhileCondition({
+    duration = 3,
+    condition = function() return isChannelling end,
+    onTick = function(elapsed) end,
+    onSuccess = function(elapsed) end,
+    onFail = function(elapsed) end,
+})
+```
+
 ---
 
 ## warn
 
-Custom warning function.
+Prints a warning prefixed with an identifier, followed by a traceback.
 
 ```lua
-MysLib.GeneralUtil.warn("Something went wrong")
+MysLib.GeneralUtil.warn("Inventory", "Something went wrong")
+-- Inventory => Something went wrong
 ```
 
 ## Examples
@@ -73,7 +88,7 @@ heartbeat:Disconnect()
 ```lua
 task.spawn(function()
     MysLib.GeneralUtil.yieldWhileCondition(function()
-        return player.Character ~= nil
+        return player.Character == nil
     end)
     print("Player respawned")
 end)

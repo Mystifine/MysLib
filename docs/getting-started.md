@@ -13,7 +13,7 @@ You may install MysLib in one of two ways:
 1. Edit your `wally.toml` file to include the following:
 ```toml
 [dependencies]
-myslib = "mystifine/myslib@0.1.4"
+myslib = "mystifine/myslib@0.2.8"
 ```
 2. Run `wally install`
 
@@ -91,10 +91,10 @@ hitbox:Destroy()
 ```lua
 -- String abbreviation
 print(MysLib.StringUtil.abbrev(1500))     -- "1.5K"
-print(MysLib.StringUtil.abbrev(1000000))  -- "1M"
+print(MysLib.StringUtil.abbrev(1000000))  -- "1.0M"
 
 -- Format time
-print(MysLib.StringUtil.formatTime(3665)) -- "1h 1m 5s"
+print(MysLib.StringUtil.formatTime(3665)) -- "0d 1h 1m 5s"
 
 -- Deep copy
 local copy = MysLib.TableUtil.deepCopy(originalTable)

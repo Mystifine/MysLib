@@ -5,10 +5,15 @@ Instance attribute manipulation with undo support. Easily modify and revert attr
 ## Creating a Modifier
 
 ```lua
-local modifier = MysLib.AttributeModifier.new(instance, "Health")
+local speedModifier = MysLib.AttributeModifier.new(humanoid, "WalkSpeed")  -- a property
+local stackModifier = MysLib.AttributeModifier.new(character, "Stacks")    -- an attribute
 ```
 
-The modifier tracks the current value of the attribute.
+If the name is a property of the instance, the property is modified; any other name is treated as an attribute. Calling `new` again with the same instance and name returns the same modifier.
+
+Changes made by other code are picked up before each modification, and values the engine clamps (such as `WalkSpeed` below 0) still undo correctly when several changes are stacked.
+
+The modifier destroys itself when the instance is destroyed or removed from the game. After that, its methods do nothing.
 
 ## Methods
 
@@ -29,7 +34,7 @@ undo.Undo()
 
 ### IncrementValue
 
-Increments the attribute value and returns an undo function.
+Increments the attribute value and returns an undo function. A missing attribute counts as `0`.
 
 ```lua
 local undo = modifier:IncrementValue(10)
@@ -38,7 +43,7 @@ local undo = modifier:IncrementValue(10)
 undo.Undo()
 ```
 
-**Returns:** Table with `Undo()` method
+**Returns:** Table with `Undo()` method. Each `Undo()` only takes effect once.
 
 ---
 
@@ -59,7 +64,7 @@ local MysLib = require(MysLib)
 
 local function damagePlayer(character, amount)
     local healthModifier = MysLib.AttributeModifier.new(character, "Health")
-    local undo = healthModifier:IncrementValue(-amount)
+    healthModifier:IncrementValue(-amount)
     
     if character:GetAttribute("Health") <= 0 then
         print("Player defeated")
@@ -90,8 +95,8 @@ print(part:GetAttribute("CustomValue"))  -- (original value)
 ### Status Effects
 
 ```lua
-local speedModifier = MysLib.AttributeModifier.new(character, "Speed")
-local slowUndo = speedModifier:SetValue(10)
+local speedModifier = MysLib.AttributeModifier.new(character.Humanoid, "WalkSpeed")
+local slowUndo = speedModifier:IncrementValue(-6)
 
 print("Slowed down")
 task.wait(5)

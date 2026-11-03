@@ -6,34 +6,36 @@ Model utilities for part selection, welding, and assembly.
 
 ### getModelLargestPart
 
-Finds the largest part in a model by volume.
+Finds the part with the largest size (`Size.Magnitude`) among a model's descendants. Returns the part and its size, or `nil` if the model has no parts.
 
 ```lua
-local largest = MysLib.ModelUtil.getModelLargestPart(model)
+local largest, size = MysLib.ModelUtil.getModelLargestPart(model)
 ```
 
 ---
 
 ### weldConstraint
 
-Creates a weld constraint between two parts with optional offset.
+Creates a `WeldConstraint` between two parts, parented to `part1`.
 
 ```lua
-MysLib.ModelUtil.weldConstraint(part1, part2)
-MysLib.ModelUtil.weldConstraint(part1, part2, offset)
+MysLib.ModelUtil.weldConstraint(part0, part1)
 ```
 
 ---
 
 ### weldModel
 
-Welds all parts in a model together to a primary part.
+Welds the model's direct child parts to its `PrimaryPart`, and sets every welded part to unanchored, non-colliding, non-touching and massless.
 
 ```lua
+model.PrimaryPart = model.Body
 MysLib.ModelUtil.weldModel(model)
 ```
 
-Automatically selects the largest part as the primary and welds all others to it.
+- The model must have a `PrimaryPart`; otherwise a warning is printed and nothing changes.
+- Nested models are welded to **their own** `PrimaryPart`, so each stays a separate assembly that you can joint to the main one (for example with a hinge).
+- Parts inside folders are not welded.
 
 ## Examples
 

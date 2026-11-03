@@ -38,8 +38,18 @@ local function getMouseHit()
 	local mouseUnitRay = camera:ScreenPointToRay(mouseScreenPos.X, mouseScreenPos.Y)
 	local mouseUnitRayDirection = mouseUnitRay.Direction
 
+	-- Built without nil holes: {nil, character} can lose the character from the filter.
+	local ignoreList = {};
+	local visuals = workspace:FindFirstChild("VISUALS");
+	if visuals then
+		table.insert(ignoreList, visuals);
+	end
+	if player.Character then
+		table.insert(ignoreList, player.Character);
+	end
+
 	local raycastParams = RaycastParams.new();
-	raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("VISUALS"), player.Character};
+	raycastParams.FilterDescendantsInstances = ignoreList;
 	raycastParams.FilterType = Enum.RaycastFilterType.Exclude;
 	raycastParams.RespectCanCollide=true;
 	raycastParams.IgnoreWater=true;

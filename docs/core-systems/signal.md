@@ -20,9 +20,10 @@ local connection = signal:Connect(function(value)
 end)
 
 connection:Disconnect()
+print(connection.Connected)  -- false
 ```
 
-**Returns:** `SignalConnection` — Object with `Disconnect()` method
+**Returns:** `SignalConnection` — Object with a `Disconnect()` method and a `Connected` property. A connection disconnected while the signal is firing is not called.
 
 ---
 
@@ -63,7 +64,18 @@ local value = signal:Wait()
 print("Signal fired with:", value)
 ```
 
-Useful for waiting on one-time events without creating a connection.
+The values are returned exactly as passed to `Fire()`, so tables keep their identity and metatables.
+
+---
+
+### DisconnectAll / Destroy
+
+Disconnects every connection. The signal can still be used afterwards. `Destroy` is an alias, so a signal can be given to a [Maid](maid.md).
+
+```lua
+signal:DisconnectAll()
+maid:GiveTask(signal)
+```
 
 ## Examples
 

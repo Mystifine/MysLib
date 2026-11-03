@@ -15,8 +15,8 @@ end
 ```
 
 Validates:
-- Character exists and is in workspace
-- Humanoid exists and health > 0
+- Character exists and has a Parent
+- A Humanoid exists (found by class, so its name doesn't matter) and health > 0
 - Humanoid is not in Dead state
 - PrimaryPart exists and is part of character
 
@@ -54,22 +54,24 @@ print(name)  -- "PlayerName"
 
 ### getPlayerThumbnailFromUserId
 
-Gets a player's avatar thumbnail URL from their user ID.
+Gets a player's avatar thumbnail from their user ID. Defaults to a 420x420 headshot; results are cached, and an empty string is returned on failure.
 
 ```lua
 local thumbnail = MysLib.PlayerUtil.getPlayerThumbnailFromUserId(123456789)
--- Use in GUI ImageLabel.Image = thumbnail
+imageLabel.Image = thumbnail
+
+local bust = MysLib.PlayerUtil.getPlayerThumbnailFromUserId(userId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size150x150)
 ```
 
 ---
 
 ### getMouseHit
 
-Gets the mouse position in 3D space. **Client-only function**.
+Gets where the mouse is pointing in 3D space, as a `CFrame` facing along the aim direction. Ignores the local character and a `workspace.VISUALS` folder if present. On mobile the screen centre is used. **Client-only function**.
 
 ```lua
-local position = MysLib.PlayerUtil.getMouseHit()
-print(position)  -- Vector3 position
+local hit = MysLib.PlayerUtil.getMouseHit()
+print(hit.Position)
 ```
 
 ## Examples

@@ -1,8 +1,8 @@
 --[[
 	Written by: Mystifine
 	Created: 2025-05-25
-	Last Updated: 2026-05-16
-	Update Count: 4
+	Last Updated: 2026-11-02
+	Update Count: 5
 ]]
 
 local RunService = game:GetService("RunService");
@@ -63,24 +63,39 @@ export type BaseHitbox = {
 	_drawDebug : (self : BaseHitbox) -> nil,
 };
 
+local function stepHitbox(hitbox)
+	if hitbox._hitboxType == "ProjectileHitbox" then
+		-- Different handling of projectile hitboxes
+		if os.clock() - hitbox._projectileEntryTime >= hitbox._projectileLifetime then
+			hitbox:Stop();
+			return;
+		end
+
+		hitbox:_performProjectileCollisionCheck();
+	else
+		hitbox:_performCollisionCheck(); -- Perform Collision Check
+	end
+end
+
 local function onStepped()
 	-- Cleanup if there is nothing to monitor
 	if next(hitboxCache) == nil then
 		steppedConnection = steppedConnection:Disconnect();
-		steppedConnection = nil;	
+		steppedConnection = nil;
+		return;
 	end
-	
-	for _, hitbox in pairs(hitboxCache) do
-		if hitbox._hitboxType == "ProjectileHitbox" then
-			-- Different handling of projectile hitboxes
-			if os.clock() - hitbox._projectileEntryTime >= hitbox._projectileLifetime then
-				hitbox:Stop();
-				continue;
-			end
-		
-			hitbox:_performProjectileCollisionCheck();
-		else
-			hitbox:_performCollisionCheck(); -- Perform Collision Check
+
+	-- Iterate a snapshot, because onHit can start, stop or destroy hitboxes mid-loop.
+	for id, hitbox in pairs(table.clone(hitboxCache)) do
+		if hitboxCache[id] ~= hitbox then
+			continue;
+		end
+
+		-- A misconfigured hitbox would otherwise error every frame and stop the ones after it.
+		local success, err = pcall(stepHitbox, hitbox);
+		if not success then
+			hitbox:Stop();
+			warn(string.format("Hitbox => %s stopped after an error: %s", tostring(hitbox._hitboxType), tostring(err)));
 		end
 	end
 end
@@ -100,6 +115,17 @@ local function getDebugPart(visualizeColor : Color3, visualizeTransparency : num
 	debugPart.Color = visualizeColor or DEFAULT_VISUALIZE_COLOR;
 	
 	return debugPart;
+end
+
+-- Calls onHit for each part, stopping early if a callback destroys the hitbox.
+local function reportHits(hitbox, touchingParts : {BasePart})
+	for i = 1, #touchingParts do
+		if not hitbox._active then
+			return;
+		end
+
+		task.spawn(hitbox.onHit, touchingParts[i]);
+	end
 end
 
 local BaseHitbox = {};
@@ -217,13 +243,7 @@ function SquareHitbox:_performCollisionCheck()
 	self:_drawDebug();
 	
 	local touchingParts = game.Workspace:GetPartBoundsInBox(self.cframe, self.size, overlapParams);
-
-	local hitLog = {};
-	for i = 1, #touchingParts do 
-		local part = touchingParts[i];
-
-		task.spawn(self.onHit, part);
-	end
+	reportHits(self, touchingParts);
 end
 
 function SquareHitbox:_drawDebug()
@@ -238,13 +258,13 @@ end
 
 
 function SquareHitbox:Cast()
-	assert(self.cframe, "'cframe' is not defined");
-	assert(self.size, "'size' is not defined");
-
 	-- If the hitbox is dead we do not want to call this method
 	if not self._active then
 		return;
 	end
+
+	assert(self.cframe, "'cframe' is not defined");
+	assert(self.size, "'size' is not defined");
 
 	self:_performCollisionCheck();
 end
@@ -285,12 +305,7 @@ function SphereHitbox:_performCollisionCheck()
 	self:_drawDebug();
 	
 	local touchingParts = game.Workspace:GetPartBoundsInRadius(self.cframe.Position, self.radius, overlapParams);
-	for i = 1, #touchingParts do 
-		local part = touchingParts[i];
-		
-		task.spawn(self.onHit, part);
-	end
-
+	reportHits(self, touchingParts);
 end
 
 function SphereHitbox:_drawDebug()
@@ -306,13 +321,13 @@ function SphereHitbox:_drawDebug()
 end
 
 function SphereHitbox:Cast()
-	assert(self.cframe, "'cframe' is not defined");
-	assert(self.radius, "'radius' is not defined");
-
 	-- If the hitbox is dead we do not want to call this method
 	if not self._active then
 		return;
 	end
+
+	assert(self.cframe, "'cframe' is not defined");
+	assert(self.radius, "'radius' is not defined");
 
 	self:_performCollisionCheck();
 end
@@ -352,12 +367,7 @@ function BasePartHitbox:_performCollisionCheck()
 	self:_drawDebug();
 	
 	local touchingParts = game.Workspace:GetPartsInPart(self.basePart, overlapParams);
-	for i = 1, #touchingParts do 
-		local part = touchingParts[i];
-		
-		task.spawn(self.onHit, part);
-	end
-
+	reportHits(self, touchingParts);
 end
 
 function BasePartHitbox:_drawDebug()
@@ -392,6 +402,22 @@ export type ProjectileHitboxConfig = HitboxConfig & {
 
 local ProjectileHitbox = setmetatable({}, {__index = BaseHitbox});
 
+local STUDS_PADDING = 1;
+
+-- Evenly spaced offsets spanning -length/2 to length/2, at most STUDS_PADDING apart.
+local function getRayOffsets(length : number) : {number}
+	local segments = math.ceil(length / STUDS_PADDING);
+	if segments < 1 then
+		return {0};
+	end
+
+	local offsets = {};
+	for i = 0, segments do
+		table.insert(offsets, -length * 0.5 + i * (length / segments));
+	end
+	return offsets;
+end
+
 -- Creates a projectile hitbox that raycasts along a path with velocity.
 -- @param config: Configuration table with cframe, velocity, lifetime, width, height, onHit, etc.
 -- @return: The projectile hitbox object.
@@ -410,6 +436,11 @@ end
 
 
 function ProjectileHitbox:Start()
+	-- If the hitbox is dead we do not want to call this method
+	if not self._active then
+		return;
+	end
+
 	assert(self.velocity, "'velocity' is not defined");
 	assert(self.lifetime, "'lifetime' is not defined");
 	assert(self.cframe, "'cframe' is not defined");
@@ -424,18 +455,12 @@ function ProjectileHitbox:Start()
 	self._projectileCFrame = self.cframe;
 	self._projectileHeight = self.height;
 	self._projectileWidth = self.width;
-	self._projectilePoints = {self.cframe};
-	
-	local STUDS_PADDING = 1;
-	local widthPoints = math.ceil(self.width // STUDS_PADDING);
-	local heightPoints = math.ceil(self.height // STUDS_PADDING);
-	local widthPadding = self.width / widthPoints;
-	local heightPadding = self.height / heightPoints;
-	local starting_point = self.cframe * CFrame.new(self.width*0.5,self.height*0.5,0);
-	for x = 0, widthPoints+1 do 
-		for y = 0, heightPoints+1 do 
-			local cframe_point = starting_point * CFrame.new(x*widthPadding,-y*heightPadding,0);
-			table.insert(self._projectilePoints, cframe_point);
+	self._projectilePoints = {};
+
+	-- A grid of rays centred on cframe, covering width x height across the direction of travel.
+	for _, x in ipairs(getRayOffsets(self.width)) do
+		for _, y in ipairs(getRayOffsets(self.height)) do
+			table.insert(self._projectilePoints, self.cframe * CFrame.new(x, y, 0));
 		end
 	end
 	
@@ -446,18 +471,19 @@ function ProjectileHitbox:Start()
 end
 
 function ProjectileHitbox:_performProjectileCollisionCheck()
-	local velocity = self._projectileVelocity;
-	local lifetime = self._projectileLifetime;
-	local lastUpdate = self._projectileLastUpdate;
-	
+	-- Measured once, so every ray advances the same distance this frame.
+	local now = os.clock();
+	local forwardOffset = self._projectileVelocity * (now - self._projectileLastUpdate);
+	self._projectileLastUpdate = now;
+
 	local points = self._projectilePoints;
-	
+
 	local raycastParams = RaycastParams.new();
 	raycastParams.FilterType = Enum.RaycastFilterType.Exclude;
 	raycastParams.FilterDescendantsInstances = self.ignoreList;
 
-	for i = 1, #points do 
-		local forwardOffset = velocity * (os.clock() - lastUpdate);
+	local closestResult = nil;
+	for i = 1, #points do
 		local endCFrame = points[i] * CFrame.new(0,0,-forwardOffset);
 		
 		if self.visualize then
@@ -472,15 +498,19 @@ function ProjectileHitbox:_performProjectileCollisionCheck()
 		end
 		
 		local result = workspace:Raycast(points[i].Position, points[i].LookVector * forwardOffset, raycastParams);
-		
-		if result then
-			task.spawn(self.onHit, result)
-			self:Stop();
-			break;
+
+		-- Every ray is cast, so the reported hit is the nearest one rather than the first in the grid.
+		if result and (not closestResult or result.Distance < closestResult.Distance) then
+			closestResult = result;
 		end
 		points[i] = endCFrame;
 	end
-	self._projectileLastUpdate = os.clock();	
+
+	if closestResult then
+		-- Stopped before onHit runs, so onHit is free to call Start() again.
+		self:Stop();
+		task.spawn(self.onHit, closestResult);
+	end
 end
 
 function ProjectileHitbox:Cast()
@@ -494,9 +524,8 @@ export type HitboxLib = {
 	basePart : (BasePartHitboxConfig : BasePartHitboxConfig) -> BasePartHitbox	,
 	projectile : (ProjectileHitboxConfig : ProjectileHitboxConfig) -> ProjectileHitbox,
 
-	raycast : (origin : Vector3, direction : Vector3, raycastParams : RaycastParams, visualize : boolean?, visualizeColor : Color3?, visualizeTransparency : number?, visualizeDuration : number?) -> RaycastResult,	
-	spherecast : (position : Vector3, radius : number, direction : Vector3, raycastParams : RaycastParams, visualize : boolean?, visualizeColor : Color3?, visualizeTransparency : number?, visualizeDuration : number?) -> RaycastResult,
-	getPlayerCharacterCFramePingAdjusted : (character : Model) -> CFrame?,
+	raycast : (origin : Vector3, direction : Vector3, raycastParams : RaycastParams, visualize : boolean?, visualizeColor : Color3?, visualizeTransparency : number?, visualizeDuration : number?) -> RaycastResult?,
+	spherecast : (position : Vector3, radius : number, direction : Vector3, raycastParams : RaycastParams, visualize : boolean?, visualizeColor : Color3?, visualizeTransparency : number?, visualizeDuration : number?) -> RaycastResult?,
 	getPartBoundsInRadius : (position : Vector3, radius : number, overlapParams : OverlapParams) -> {Instance},
 	getPartBoundsInBox : (cframe : CFrame, size : Vector3, overlapParams : OverlapParams) -> {Instance},
 	getPartsInPart : (basepart : BasePart, overlapParams : OverlapParams) -> {Instance},
@@ -530,7 +559,7 @@ function HitboxLib.raycast(origin : Vector3, direction : Vector3, raycastParams 
 		debugPart.CFrame = CFrame.lookAt((start_pos + end_pos)*0.5, end_pos);
 		debugPart.Size = Vector3.new(0.05,0.05,distance);
 		debugPart.Parent = workspace:FindFirstChild("VISUALS") or workspace;
-		Debris:AddItem(debugPart, visualizeDuration);
+		Debris:AddItem(debugPart, visualizeDuration or DEFAULT_VISUALIZE_DURATION);
 	end
 
 	return result;
@@ -610,13 +639,18 @@ end
 
 -- Finds the closest target from a list of models based on position.
 -- @param position: Reference position to measure distance from.
--- @param targetList: Dictionary of models to search.
+-- @param targetList: Dictionary of models to search. Models without a PrimaryPart are skipped.
 -- @return: The closest model, or nil if no targets.
 function HitboxLib.getClosestTarget(position : Vector3, targetList : {[Model] : boolean})
 	local closestDistance
 	local closestTarget
 	for target, _ in pairs(targetList) do
-		local distance = (target.PrimaryPart.Position - position).Magnitude;
+		local primaryPart = target.PrimaryPart;
+		if not primaryPart then
+			continue;
+		end
+
+		local distance = (primaryPart.Position - position).Magnitude;
 		if not closestTarget or distance < closestDistance then
 			closestDistance = distance;
 			closestTarget = target;

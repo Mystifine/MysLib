@@ -30,9 +30,29 @@ vel:Destroy()
 
 ---
 
+### Priority
+
+Creating a velocity on a part destroys any existing MysLib velocity on that part with an **equal or lower** priority. Higher-priority velocities are left in place.
+
+---
+
 ## Orientation
 
-Handles angular velocity and rotation constraints.
+Holds a part at a target rotation using an `AlignOrientation`, with the same priority rules as Velocity.
+
+```lua
+local orient = MysLib.PhysicsUtil.Orientation.new(
+    part,                               -- BasePart to rotate
+    10000,                              -- MaxTorque
+    CFrame.Angles(0, math.rad(90), 0),  -- Target orientation
+    2,                                  -- Duration in seconds (-1 for infinite)
+    1                                   -- Priority (higher overrides lower)
+)
+
+orient:SetCFrame(CFrame.Angles(0, math.rad(180), 0))
+orient:SetMaxTorque(20000)
+orient:Destroy()
+```
 
 ---
 

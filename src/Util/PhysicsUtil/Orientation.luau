@@ -47,14 +47,10 @@ function OrientationClass.new(base_part: BasePart, max_torque: number, cframe: C
 	for i = 1, #children do 
 		local child = children[i];
 		if not (child:IsA("Attachment") and child.Name == ATTACHMENT_NAME) then continue end;
-		local vel_priority = child:GetAttribute("orientationPriority");
+		local vel_priority = child:GetAttribute("orientationPriority") or 0;
 
 		-- Check priority for equal or less than
 		if priority >= vel_priority then
-
-			local lin_velocity = child:FindFirstChild(ALIGN_ORIENTATION_NAME);
-			if not lin_velocity then continue end;
-
 			-- Delete the lower priority orientation
 			child:Destroy();
 		end
@@ -64,11 +60,13 @@ function OrientationClass.new(base_part: BasePart, max_torque: number, cframe: C
 	self.attachment = Instance.new("Attachment")
 	self.attachment.Name = ATTACHMENT_NAME;
 	self.attachment.Position = base_part.CFrame:PointToObjectSpace(base_part.AssemblyCenterOfMass);
-	self.attachment.Parent = base_part
+	-- Set before parenting, so code reacting to ChildAdded already sees the priority.
 	self.attachment:SetAttribute("orientationPriority", priority);
+	self.attachment.Parent = base_part
 
 	-- Create AlignOrientation
 	self.align_orientation = Instance.new("AlignOrientation")
+	self.align_orientation.Name = ALIGN_ORIENTATION_NAME
 	self.align_orientation.MaxTorque = max_torque
 	self.align_orientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
 	self.align_orientation.CFrame = cframe

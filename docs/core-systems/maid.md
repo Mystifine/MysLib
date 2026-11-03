@@ -36,11 +36,28 @@ maid:GiveTask(instance)
 maid:AddTask(connection)
 ```
 
+Pass a key as the second argument to replace a task later. Giving a different task under the same key cleans up the previous one first:
+
+```lua
+maid:GiveTask(effectA, "effect")
+maid:GiveTask(effectB, "effect")  -- effectA is cleaned up
+```
+
+---
+
+### RemoveTask
+
+Cleans up and forgets the task stored under a key.
+
+```lua
+maid:RemoveTask("effect")
+```
+
 ---
 
 ### Destroy / DoCleaning
 
-Cleans up all tasks in the maid:
+Cleans up all tasks in the maid, in the order they were given:
 - Functions are called
 - Connections are disconnected
 - Instances are destroyed
@@ -50,6 +67,18 @@ maid:Destroy()
 
 -- DoCleaning is an alias
 maid:DoCleaning()
+```
+
+Each task runs once. If a task errors, a warning with a traceback is printed and the remaining tasks are still cleaned. Tasks added while cleaning are cleaned too, and the maid can be reused afterwards.
+
+---
+
+### Maid.cleanupTask
+
+Cleans up a single task using the same rules, without a maid. Errors are not caught.
+
+```lua
+MysLib.Maid.cleanupTask(connection)
 ```
 
 ## Examples
